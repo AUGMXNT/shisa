@@ -16,8 +16,8 @@ rows = c.fetchall()
 
 
 # Define OpenAI function
-# @backoff.on_exception(backoff.expo, Exception)
-def call_openai(text)
+@backoff.on_exception(backoff.expo, Exception)
+def call_openai(text):
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
@@ -44,37 +44,40 @@ def call_openai(text)
 enc = tiktoken.get_encoding("cl100k_base")
 tokencount = []
 for row in rows:
-    print(f"Translating {row[0]}:")
+    id = row[0]
+    print(f"Translating {id} ({row[1]}):")
     conversation = json.loads(row[2])
     conversation_ja = []
     for turn in conversation:
         # Token counts
         # tokens = enc.encode(turn['value'])
-        # tokencount = len(tokens)
+        # tokencount.append(len(tokens))
+        # continue
         
         value_ja = ""
         print('>', turn)
 
         # First let's try to get a value
         if turn["from"] == "system":
-        c.execute("SELECT prompt_ja FROM prompts WHERE prompt_en = ?", (turn["value"],))
-        row = c.fetchone()
-        if row is not None:
-            value_ja = row[0]
+            c.execute("SELECT prompt_ja FROM prompts WHERE prompt_en = ?", (turn["value"],))
+            row = c.fetchone()
+            if row is not None:
+                value_ja = row[0]
 
         if not value_ja:
             value_ja = call_openai(turn["value"])
             time.sleep(1)
 
-        print('>', value_ja)
+        print('>>', value_ja)
         turn['value'] = value_ja
         conversation_ja.append(turn)
 
     # OK, lets 
-    c.execute("UPDATE airoboros_31 SET conversation_ja = ? WHERE id = ?", (conversation_ja, row[0]))
+    conv_json = json.dumps(conversation_ja)
+    c.execute("UPDATE airoboros_31 SET conversation_ja = ? WHERE id = ?", (conv_json, id))
     conn.commit()
-    sys.exit()
 
-# print(sorted(tokencount))
+    time.sleep(2)
+
 
 conn.close()
