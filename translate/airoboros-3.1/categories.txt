@@ -1,0 +1,70 @@
+categories = {
+    'agent',
+    'awareness',
+    'card',
+    'coding',
+    'contextual',
+    'cot',
+    'counterfactual_contextual',
+    'detailed_writing',
+    'editor',
+    'experience',
+    'general',
+    'greeting',
+    'gtkm',
+    'joke',
+    'mathjson',
+    'misconception',
+    'multiple_choice',
+    'multiturn',
+    'orca',
+    'plan',
+    'quiz',
+    'riddle',
+    'roleplay',
+    'song',
+    'stylized_response',
+    'summarization',
+    'theory_of_mind',
+    'trivia',
+    'wordgame',
+    'writing'
+}
+
+We probably don't need these in Japanese...
+
+categories_en_jp = [
+    (cat, {
+        'agent': 'エージェント',
+        'awareness': '認識',
+        'card': 'カード',
+        'coding': 'コーディング',
+        'contextual': '文脈的',
+        'cot': 'COT',  # Acronym, untranslated
+        'counterfactual_contextual': '反事実的文脈',
+        'detailed_writing': '詳細な執筆',
+        'editor': 'エディター',
+        'experience': '経験',
+        'general': '一般',
+        'greeting': '挨拶',
+        'gtkm': 'GTKM',  # Acronym, untranslated
+        'joke': '冗談',
+        'mathjson': 'MathJSON',  # Specific term, untranslated
+        'misconception': '誤解',
+        'multiple_choice': '選択肢',
+        'multiturn': 'マルチターン',
+        'orca': 'ORCA',  # Acronym, untranslated
+        'plan': '計画',
+        'quiz': 'クイズ',
+        'riddle': '謎',
+        'roleplay': 'ロールプレイ',
+        'song': '歌',
+        'stylized_response': 'スタイリッシュな応答',
+        'summarization': '要約',
+        'theory_of_mind': '心の理論',
+        'trivia': '豆知識',
+        'wordgame': '単語ゲーム',
+        'writing': '執筆'
+    }.get(cat, cat))  # Default to the original term if not in the dictionary
+    for cat in categories
+]
