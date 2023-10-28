@@ -40,6 +40,9 @@ CREATE TABLE IF NOT EXISTS prompts (
 """)
 conn.commit()
 
+# TODO: if we run this again, we should insert the prompts first, then SELECT
+# only empty prompts...
+
 for prompt in repeat_prompts:
     print('>', prompt)
     response = openai.ChatCompletion.create(
