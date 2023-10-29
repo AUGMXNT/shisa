@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS airoboros_31 (
     id VARCHAR PRIMARY KEY,
     category VARCHAR,
     conversation TEXT,
-    conversation_ja TEXT
+    conversation_ja TEXT,
+    translator VARCHAR
 );
 """)
 conn.commit()
