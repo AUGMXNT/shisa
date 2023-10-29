@@ -6,6 +6,9 @@ import sys
 import tiktoken
 import time
 
+# We may use a faster model!
+model = 'gpt-4'
+
 # Connect to the SQLite database
 conn = sqlite3.connect("airoboros.db")
 
@@ -14,12 +17,11 @@ c = conn.cursor()
 c.execute("SELECT id, category, conversation FROM airoboros_31 WHERE category != 'mathjson' AND conversation_ja IS NULL")
 rows = c.fetchall()
 
-
 # Define OpenAI function
 @backoff.on_exception(backoff.expo, Exception)
 def call_openai(text):
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model=model,
         messages=[
             {
                 "role": "system",
@@ -44,7 +46,10 @@ def call_openai(text):
 enc = tiktoken.get_encoding("cl100k_base")
 tokencount = []
 for row in rows:
+    ttt = time.time()
     id = row[0]
+
+    print("===")
     print(f"Translating {id} ({row[1]}):")
     conversation = json.loads(row[2])
     conversation_ja = []
@@ -74,10 +79,14 @@ for row in rows:
 
     # OK, lets 
     conv_json = json.dumps(conversation_ja)
-    c.execute("UPDATE airoboros_31 SET conversation_ja = ? WHERE id = ?", (conv_json, id))
+    c.execute("UPDATE airoboros_31 SET conversation_ja = ?, translator=? WHERE id = ?", (conv_json, model, id))
     conn.commit()
 
-    time.sleep(2)
+    ttt = time.time() - ttt
+    print(f"# {ttt:.2f} s")
+    print()
+
+    time.sleep(1)
 
 
 conn.close()
