@@ -139,14 +139,10 @@ async def main():
         while len(pending) >= MAX_CONCURRENCY:
             await asyncio.sleep(0.1)
             _, pending = await asyncio.wait(tasks, timeout=0.0)
-    count = 0
     for row in rows:
         turns = json.loads(row[2])
         await _concurrency_check()
         tasks.append(asyncio.create_task(translate_turns(conn, row[0], turns)))
-        count += 1
-        if count > 8:
-            break
     await asyncio.wait(tasks)
     conn.close()
 
