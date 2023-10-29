@@ -14,7 +14,7 @@ import sys
 import time
 
 # Max concurrency in calls to bison API.
-MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY", "8"))
+MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY", "4"))
 
 # Prompt template.
 TEMPLATE = """
@@ -119,11 +119,12 @@ async def translate_turns(conn: Any, id_: str, turns: List[Dict[str, Any]]) -> D
         translated[-1]["value"] = value_ja
     translated_as_json = json.dumps(translated)
     cursor.execute("UPDATE airoboros_31 SET conversation_ja = ?, translator = ? WHERE id = ?", (translated_as_json, "text-bison-32k", id_))
+    cursor.execute("REPLACE INTO translate_history (id, translator, translation) VALUES (?, ?, ?)", (id_, "text-bison-32k", translated_as_json))
     conn.commit()
 
 async def main():
     # Connect to the SQLite database
-    conn = sqlite3.connect("airoboros_bison.db")
+    conn = sqlite3.connect("airoboros.db")
 
     # Create a cursor object
     c = conn.cursor()
