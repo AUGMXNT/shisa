@@ -8,7 +8,7 @@ NODE_RANK=0
 MASTER_ADDR=localhost
 MASTER_PORT=6001
 
-MODEL="/mnt/data/models/Qwen_Qwen-14B" # local model
+MODEL="Qwen/Qwen-14B" # local model
 # ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.
 # See the section for finetuning in README for more information.
 DATA="qwen.finetune.dataset.json"
@@ -22,7 +22,7 @@ DISTRIBUTED_ARGS="
 "
 
 # Remember to use --fp16 instead of --bf16 due to autogptq
-torchrun $DISTRIBUTED_ARGS Qwen/finetune.py \
+torchrun $DISTRIBUTED_ARGS finetune.py \
     --model_name_or_path $MODEL \
     --data_path $DATA \
     --fp16 True \
