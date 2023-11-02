@@ -13,7 +13,7 @@ from torch.utils.data import Dataset
 from deepspeed import zero
 from deepspeed.runtime.zero.partition_parameters import ZeroParamStatus
 import transformers
-from transformers import Trainer, GPTQConfig, deepspeed
+from transformers import Trainer, GPTQConfig, deepspeed, BitsAndBytesConfig
 from transformers.trainer_pt_utils import LabelSmoother
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from accelerate.utils import DistributedType
@@ -307,13 +307,15 @@ def train():
         config=config,
         cache_dir=training_args.cache_dir,
         device_map=device_map,
-        low_cpu_mem_usage=True if training_args.use_lora and not lora_args.q_lora else False,
+        load_in_4bit=True,
+        low_cpu_mem_usage=True,
         trust_remote_code=True,
-        quantization_config=GPTQConfig(
-            bits=4, disable_exllama=True
-        )
-        if training_args.use_lora and lora_args.q_lora
-        else None,
+        quantization_config=BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=compute_dtype,
+            bnb_4bit_use_double_quant=False,
+        ),
     )
     tokenizer = transformers.AutoTokenizer.from_pretrained(
         model_args.model_name_or_path,
