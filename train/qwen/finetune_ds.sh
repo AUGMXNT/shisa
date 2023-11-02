@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export WANDB_API_KEY="af02673b97ffa3a24d23466205173be0c6d2c6d6"
+export WANDB_PROJECT="shisa-qwen"
+
 # It seems that an optimal value is given by OMP_NUM_THREADS = nb_cpu_threads / nproc_per_node.
 # https://github.com/microsoft/DeepSpeed/discussions/3904
 # https://github.com/pytorch/pytorch/issues/22260
@@ -48,6 +51,6 @@ torchrun $DISTRIBUTED_ARGS finetune.py \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
     --report_to "none" \
-    --model_max_length 8192 \
+    --model_max_length 4096 \
     --gradient_checkpointing True \
-    --deepspeed Qwen/finetune/ds_config_zero2.json
+    --deepspeed Qwen/finetune/ds_config_zero3.json

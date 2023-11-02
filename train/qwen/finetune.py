@@ -41,6 +41,7 @@ class DataArguments:
 class TrainingArguments(transformers.TrainingArguments):
     cache_dir: Optional[str] = field(default=None)
     optim: str = field(default="adamw_torch")
+    report_to: str = field(default="wandb")
     model_max_length: int = field(
         default=8192,
         metadata={
@@ -307,15 +308,7 @@ def train():
         config=config,
         cache_dir=training_args.cache_dir,
         device_map=device_map,
-        load_in_4bit=True,
-        low_cpu_mem_usage=True,
         trust_remote_code=True,
-        quantization_config=BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=compute_dtype,
-            bnb_4bit_use_double_quant=False,
-        ),
     )
     tokenizer = transformers.AutoTokenizer.from_pretrained(
         model_args.model_name_or_path,
@@ -364,16 +357,10 @@ def train():
         model=model, tokenizer=tokenizer, args=training_args, **data_module
     )
 
-    # if trainer.is_world_process_zero():  # Ensure this is the main process
-    #     wandb.init(project="shisa-qwen", config=training_args)
-
     trainer.train()
     trainer.save_state()
 
     safe_save_model_for_hf_trainer(trainer=trainer, output_dir=training_args.output_dir, bias=lora_args.lora_bias)
-
-    # if trainer.is_world_process_zero():
-    #    wandb.finish()
 
 
 if __name__ == "__main__":
