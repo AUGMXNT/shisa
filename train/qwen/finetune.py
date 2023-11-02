@@ -1,5 +1,6 @@
 # This code is based on the revised code from fastchat based on tatsu-lab/stanford_alpaca.
 import sys
+import wandb
 
 from dataclasses import dataclass, field
 import json
@@ -19,6 +20,11 @@ from accelerate.utils import DistributedType
 
 
 IGNORE_TOKEN_ID = LabelSmoother.ignore_index
+
+wandb.init(
+    # set the wandb project where this run will be logged
+    project="shisa-qwen"
+)
 
 
 @dataclass
@@ -358,6 +364,7 @@ def train():
     )
 
     # Start trainner
+    wandb.watch(model, log="all")
     trainer = Trainer(
         model=model, tokenizer=tokenizer, args=training_args, **data_module
     )
@@ -366,6 +373,7 @@ def train():
     trainer.save_state()
 
     safe_save_model_for_hf_trainer(trainer=trainer, output_dir=training_args.output_dir, bias=lora_args.lora_bias)
+    wandb.finish()
 
 
 if __name__ == "__main__":
