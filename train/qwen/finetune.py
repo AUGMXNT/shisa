@@ -1,6 +1,6 @@
 # This code is based on the revised code from fastchat based on tatsu-lab/stanford_alpaca.
 import sys
-import wandb
+# import wandb
 
 from dataclasses import dataclass, field
 import json
@@ -20,12 +20,6 @@ from accelerate.utils import DistributedType
 
 
 IGNORE_TOKEN_ID = LabelSmoother.ignore_index
-
-wandb.init(
-    # set the wandb project where this run will be logged
-    project="shisa-qwen"
-)
-
 
 @dataclass
 class ModelArguments:
@@ -313,7 +307,7 @@ def train():
         config=config,
         cache_dir=training_args.cache_dir,
         device_map=device_map,
-        low_cpu_mem_usage=True, # if training_args.use_lora and not lora_args.q_lora else False,
+        low_cpu_mem_usage=True if training_args.use_lora and not lora_args.q_lora else False,
         trust_remote_code=True,
         quantization_config=GPTQConfig(
             bits=4, disable_exllama=True
@@ -364,16 +358,20 @@ def train():
     )
 
     # Start trainner
-    wandb.watch(model, log="all")
     trainer = Trainer(
         model=model, tokenizer=tokenizer, args=training_args, **data_module
     )
+
+    # if trainer.is_world_process_zero():  # Ensure this is the main process
+    #     wandb.init(project="shisa-qwen", config=training_args)
 
     trainer.train()
     trainer.save_state()
 
     safe_save_model_for_hf_trainer(trainer=trainer, output_dir=training_args.output_dir, bias=lora_args.lora_bias)
-    wandb.finish()
+
+    # if trainer.is_world_process_zero():
+    #    wandb.finish()
 
 
 if __name__ == "__main__":
