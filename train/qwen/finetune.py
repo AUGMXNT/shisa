@@ -1,5 +1,5 @@
 # This code is based on the revised code from fastchat based on tatsu-lab/stanford_alpaca.
-
+import sys
 
 from dataclasses import dataclass, field
 import json
@@ -23,7 +23,7 @@ IGNORE_TOKEN_ID = LabelSmoother.ignore_index
 
 @dataclass
 class ModelArguments:
-    model_name_or_path: Optional[str] = field(default="Qwen/Qwen-7B")
+    model_name_or_path: Optional[str] = field(default="Qwen/Qwen-14B")
 
 
 @dataclass
@@ -128,7 +128,7 @@ def preprocess(
     max_len: int,
     system_message: str = "You are a helpful assistant."
 ) -> Dict:
-    roles = {"user": "<|im_start|>user", "assistant": "<|im_start|>assistant"}
+    roles = {"system":"system", "user": "<|im_start|>user", "assistant": "<|im_start|>assistant"}
 
     im_start = tokenizer.im_start_id
     im_end = tokenizer.im_end_id
@@ -140,8 +140,13 @@ def preprocess(
     # Apply prompt templates
     input_ids, targets = [], []
     for i, source in enumerate(sources):
+        # Overwrite system message w/ ours if there is one
+        if source[0]["from"] == "system":
+            system_message = source[0]["value"]
+
         if roles[source[0]["from"]] != roles["user"]:
             source = source[1:]
+            logging.info("Source:", source)
 
         input_id, target = [], []
         system = [im_start] + _system + tokenizer(system_message).input_ids + [im_end] + nl_tokens
@@ -302,7 +307,7 @@ def train():
         config=config,
         cache_dir=training_args.cache_dir,
         device_map=device_map,
-        low_cpu_mem_usage=True if training_args.use_lora and not lora_args.q_lora else False,
+        low_cpu_mem_usage=True, # if training_args.use_lora and not lora_args.q_lora else False,
         trust_remote_code=True,
         quantization_config=GPTQConfig(
             bits=4, disable_exllama=True
