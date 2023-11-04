@@ -34,17 +34,12 @@ if not DEBUG:
 
 # Execute Threads
 def main():
-    conn = sqlite3.connect(DB)
-    c = conn.cursor()
-    if DEBUG:
-        c.execute("SELECT id, category, conversation FROM airoboros_31 WHERE category != 'mathjson' AND translator != 'gpt-4' AND LENGTH(conversation_ja) >= 20000 LIMIT 1")
-    else:
-        c.execute("SELECT id, category, conversation FROM airoboros_31 WHERE category != 'mathjson' AND translator != 'gpt-4' AND LENGTH(conversation_ja) >= 20000")
-    rows = c.fetchall()
-    conn.close()
+    # > 20K characters
+    # rows = get_long_rows()
 
-    logger.debug("=== DEBUG MODE (1 item, no saving to DB) ===")
-    logger.info(f"=== Processing {len(rows)} items ===")
+    # Untranslated non mathjson! (all roleplay)
+    rows = get_untranslated()
+
 
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
         for row in rows:
@@ -56,6 +51,72 @@ def main():
                 logger.info("Keyboard Interrupt. Canceling tasks...")
                 executor.shutdown(wait=False)
                 raise
+
+
+'''
+This is our initial run of 1077 long items
+'''
+def get_long_rows():
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    if DEBUG:
+        c.execute("SELECT id, category, conversation FROM airoboros_31 WHERE category != 'mathjson' AND translator != 'gpt-4' AND LENGTH(conversation_ja) >= 20000 LIMIT 1")
+    else:
+        c.execute("SELECT id, category, conversation FROM airoboros_31 WHERE category != 'mathjson' AND translator != 'gpt-4' AND LENGTH(conversation_ja) >= 20000")
+    rows = c.fetchall()
+    conn.close()
+
+    logger.debug("=== DEBUG MODE (1 item, no saving to DB) ===")
+    logger.info(f"=== Processing {len(rows)} items ===")
+    return rows
+
+
+'''
+Somehow there are 998 missing translations:
+
+sqlite> SELECT COUNT(*), category FROM airoboros_31 WHERE category != 'mathjson' AND conversation_ja IS NULL GROUP BY category;
+
+2|awareness
+1|card
+90|coding
+23|contextual
+20|counterfactual_contextual
+1|detailed_writing
+6|editor
+3|experience
+188|general
+10|gtkm
+110|joke
+31|misconception
+10|multiple_choice
+61|multiturn
+17|orca
+2|quiz
+36|riddle
+91|roleplay
+1|song
+21|stylized_response
+187|summarization
+5|theory_of_mind
+10|trivia
+8|wordgame
+64|writing
+'''
+def get_untranslated():
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    if DEBUG:
+        c.execute("SELECT id, category, conversation FROM airoboros_31 WHERE category != 'mathjson' AND conversation_ja IS NULL ORDER BY LENGTH(conversation) ASC LIMIT 1")
+    else:
+        c.execute("SELECT id, category, conversation FROM airoboros_31 WHERE category != 'mathjson' AND conversation_ja IS NULL ORDER BY LENGTH(conversation) ASC")
+    rows = c.fetchall()
+    conn.close()
+
+    logger.debug("=== DEBUG MODE (1 item, no saving to DB) ===")
+    logger.info(f"=== Processing {len(rows)} items ===")
+    return rows
+
+
 
 
 thread_dict = {}
