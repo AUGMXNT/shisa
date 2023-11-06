@@ -37,8 +37,11 @@ def main():
     # > 20K characters
     # rows = get_long_rows()
 
-    # Untranslated non mathjson! (all roleplay)
+    # Untranslated non mathjson!
     rows = get_untranslated()
+
+    # Retranslate conversation_ja/conversation ratio >3.0, <1.0...
+    # rows = get_sus_lengths()
 
 
     with ThreadPoolExecutor(max_workers=THREADS) as executor:
@@ -69,7 +72,6 @@ def get_long_rows():
     logger.debug("=== DEBUG MODE (1 item, no saving to DB) ===")
     logger.info(f"=== Processing {len(rows)} items ===")
     return rows
-
 
 '''
 Somehow there are 998 missing translations:
@@ -115,6 +117,42 @@ def get_untranslated():
     logger.debug("=== DEBUG MODE (1 item, no saving to DB) ===")
     logger.info(f"=== Processing {len(rows)} items ===")
     return rows
+
+def get_sus_lengths():
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    if DEBUG:
+        c.execute("SELECT id, category, conversation, conversation_ja FROM airoboros_31 WHERE category != 'mathjson' AND conversation_ja IS NOT NULL AND translator != 'gpt-4' LIMIT 1")
+    else:
+        c.execute("SELECT id, category, conversation, conversation_ja FROM airoboros_31 WHERE category != 'mathjson' AND conversation_ja IS NOT NULL AND translator != 'gpt-4'")
+    rows = c.fetchall()
+    conn.close()
+
+    # This will take about 30s to filter...
+    def get_tokencount(conversation_json):
+        c = json.loads(conversation_json)
+        enc = tiktoken.get_encoding("cl100k_base")
+
+        tokencount = 0
+        for turn in c:
+            tokens = enc.encode(turn['value'])
+            tokencount += len(tokens)
+
+        return tokencount
+
+    sus = []
+    for row in rows:
+        tc = get_tokencount(row['conversation'])
+        tc_ja = get_tokencount(row['conversation_ja'])
+        ratio = tc_ja/tc
+
+        if ratio >= 3.0 or ratio < 0.5:
+            sus.append(row)
+
+    logger.debug("=== DEBUG MODE (1 item, no saving to DB) ===")
+    logger.info(f"=== Processing {len(sus)} items ===")
+    return sus
 
 
 
