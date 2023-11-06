@@ -1,8 +1,13 @@
 #!/bin/bash
+export WANDB_API_KEY="af02673b97ffa3a24d23466205173be0c6d2c6d6"
+export WANDB_PROJECT="shisa-qwen"
+
+export OMP_NUM_THREADS=12 
+
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 DIR=`pwd`
 
-GPUS_PER_NODE=2
+GPUS_PER_NODE=8
 NNODES=1
 NODE_RANK=0
 MASTER_ADDR=localhost
@@ -22,7 +27,7 @@ DISTRIBUTED_ARGS="
 "
 
 # Remember to use --fp16 instead of --bf16 due to autogptq
-torchrun $DISTRIBUTED_ARGS finetune.py \
+torchrun $DISTRIBUTED_ARGS finetune-qlora.py \
     --model_name_or_path $MODEL \
     --data_path $DATA \
     --fp16 True \
@@ -42,8 +47,7 @@ torchrun $DISTRIBUTED_ARGS finetune.py \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
     --report_to "none" \
-    --model_max_length 512 \
-    --lazy_preprocess True \
+    --model_max_length 4096 \
     --use_lora \
     --q_lora \
     --gradient_checkpointing \
