@@ -20,12 +20,9 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_URL = 'https://api.openai.com/v1/chat/completions'
 
 # Prompt template.
-TEMPLATE = """
-Translate the following to Japanese:
+TEMPLATE = """Translate the text below to Japanese.  Leave any non-English words untranslated, and be sure to not modify code syntax.  Don't include "Certainly!", "Here's your translation", etc., just provide the translation as requested, ensuring only the English portions are translated, and code syntax is maintained.
 
 {text}
-
-The text translated to Japanese is:
 """
 
 # GCP variables.
@@ -69,17 +66,16 @@ async def handle_bison_error(result):
     raise Exception(f"Error querying bison [{code}]: {text}")
 
 @backoff.on_exception(backoff.expo, (RetriableError,))
-async def post_bison(body: Dict[str, Any]):
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            BISON_URL, json=body, headers={"Authorization": f"Bearer {get_vertexai_token()}"}
-        ) as result:
-            if result.status != 200:
-                await handle_bison_error(result)
-            data = await result.json()
-            if data['predictions'][0].get("safetyAttributes", {}).get("blocked"):
-                raise Exception("Response blocked by vertex.")
-            return data
+async def post_bison(body: Dict[str, Any], client: Any):
+    async with client.post(
+        BISON_URL, json=body, headers={"Authorization": f"Bearer {get_vertexai_token()}"}
+    ) as result:
+        if result.status != 200:
+            await handle_bison_error(result)
+        data = await result.json()
+        if data['predictions'][0].get("safetyAttributes", {}).get("blocked"):
+            raise Exception("Response blocked by vertex.")
+        return data
 
 async def handle_openai_error(result):
     text = await result.text()
@@ -98,16 +94,15 @@ async def handle_openai_error(result):
         raise Exception(text)
 
 @backoff.on_exception(backoff.expo, (RetriableError,))
-async def post_openai(body: Dict[str, Any]):
+async def post_openai(body: Dict[str, Any], client: Any):
     headers = {"Authorization": f"Bearer {OPENAI_API_KEY}"}
-    async with aiohttp.ClientSession() as session:
-        async with session.post(OPENAI_URL, json=body, headers=headers) as result:
-            if result.status != 200:
-                await handle_openai_error(result)
-            return await result.json()
+    async with client.post(OPENAI_URL, json=body, headers=headers) as result:
+        if result.status != 200:
+            await handle_openai_error(result)
+        return await result.json()
 
 # Translate a single input text, which handles posting to bison and extracting response.
-async def translate_bison(text: str) -> str:
+async def translate_bison(text: str, client: Any) -> str:
     params = {
         "temperature": 0.05,
         "maxDecodeSteps": 8192,
@@ -116,13 +111,13 @@ async def translate_bison(text: str) -> str:
     }
     body = {"instances": [{"content": TEMPLATE.format(text=text)}], "parameters": params}
     try:
-        result = await post_bison(body)
+        result = await post_bison(body, client)
     except Exception as exc:
         logger.warning(f"Translation fail: {exc}")
         raise
     return 'bison', result["predictions"][0]["content"].strip()
 
-async def translate_openai(text: str) -> str:
+async def translate_openai(text: str, client: Any) -> str:
     body = {
         "model": "gpt-4",
         "messages": [
@@ -130,21 +125,21 @@ async def translate_openai(text: str) -> str:
         ],
         "temperature": 0.1,
     }
-    result = await post_openai(body)
+    result = await post_openai(body, client)
     return 'gpt-4', result["choices"][0]["message"]["content"]
 
-async def translate(text: str) -> str:
+async def translate(text: str, client: Any) -> str:
     try:
-        return await translate_bison(text)
+        return await translate_bison(text, client)
     except Exception as exc:
         logger.warning(f'Bison translation fail: {exc}')
         try:
-            return await translate_openai(text)
+            return await translate_openai(text, client)
         except Exception as exc2:
             logger.error(f'Bison and OpenAI fail: {exc2}')
     return None, None
 
-async def translate_paragraph(conn: Any, paragraph: str) -> str:
+async def translate_paragraph(conn: Any, paragraph: str, client: Any) -> str:
     cursor = conn.cursor()
     id_ = hashlib.md5(paragraph.encode()).hexdigest()
     logger.debug(f"Translating {id_}...")
@@ -156,7 +151,7 @@ async def translate_paragraph(conn: Any, paragraph: str) -> str:
         translator = row[0]
         value_ja = row[1]
     else:
-        translator, value_ja = await translate(paragraph)
+        translator, value_ja = await translate(paragraph, client)
         if value_ja:
             cursor.execute("INSERT INTO prompts (prompt_en, prompt_ja, translator) VALUES (?, ?, ?) ON CONFLICT(prompt_en) DO NOTHING", (paragraph, value_ja, translator))
             conn.commit()
@@ -167,7 +162,7 @@ async def translate_paragraph(conn: Any, paragraph: str) -> str:
     return value_ja
 
 # Translate a single conversation, which will have multiple text blocks to translate.
-async def translate_turns(conn: Any, id_: str, turns: List[Dict[str, Any]]) -> Dict[str, Any]:
+async def translate_turns(conn: Any, id_: str, turns: List[Dict[str, Any]], client: Any) -> Dict[str, Any]:
     cursor = conn.cursor()
     logger.debug(f"Translating {id_}...")
     translated = []
@@ -179,13 +174,14 @@ async def translate_turns(conn: Any, id_: str, turns: List[Dict[str, Any]]) -> D
         if not value:
             return
         paragraphs = [value]
-        if len(value) >= 2048:
-            paragraphs = value.split('\n\n')
+        ratio = len(value) / len(value.encode())
+        if len(value) >= 2048 and '```' not in value and '{' not in value and not re.search('(^|\s)def | in range\(', value) and ratio >= 0.9 and 'std::' not in value and '#include' not in value:
+            paragraphs = [p for p in value.split('\n\n') if p.strip()]
 
         # Translate.
         paragraphs_ja = []
         for paragraph in paragraphs:
-            paragraph_ja = await translate_paragraph(conn, paragraph)
+            paragraph_ja = await translate_paragraph(conn, paragraph, client)
             if not paragraph_ja:
                 return
             paragraphs_ja.append(paragraph_ja)
@@ -218,10 +214,11 @@ async def main():
         while len(pending) >= MAX_CONCURRENCY:
             await asyncio.sleep(0.1)
             _, pending = await asyncio.wait(tasks, timeout=0.0)
-    for row in rows:
-        turns = json.loads(row[1])
-        await _concurrency_check()
-        tasks.append(asyncio.create_task(translate_turns(conn, row[0], turns)))
+    async with aiohttp.ClientSession() as client:
+        for row in rows:
+            turns = json.loads(row[1])
+            await _concurrency_check()
+            tasks.append(asyncio.create_task(translate_turns(conn, row[0], turns, client)))
     await asyncio.wait(tasks)
     conn.close()
 
