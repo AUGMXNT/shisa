@@ -19,6 +19,8 @@ model = AutoModelForCausalLM.from_pretrained(
 	low_cpu_mem_usage=True, 
 	device_map="auto"
 )
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model.to(device)
 
 # this is for reproducibility.
 # feel free to change to get different result
@@ -26,7 +28,7 @@ seed = 42
 torch.manual_seed(seed)
 
 
-if FORMAT == 'llama2':
+if FORMAT == 'llama-2':
 	tokenizer.chat_template = '''
 	{% for message in messages %}
 		{% if message['role'] == 'user' %}
@@ -44,34 +46,23 @@ else:
 
 # system, user, assistant
 chat = [{"role": "system", "content": PROMPT}]
-input_ids = tokenizer.apply_chat_template(chat)
 
-'''
-input_ids = tokenizer.encode(
-    prompt,
-    add_special_tokens=False,
-    return_tensors="pt"
-)
-'''
+prompt = tokenizer.apply_chat_template(chat, add_generation_prompt=True, return_tensors="pt").to("cuda")
 
 tokens = model.generate(
-    input_ids.to(device=model.device),
+	prompt,
     max_new_tokens=2000,
     temperature=0.1,
     top_p=0.95,
     do_sample=True,
 )
 
-
 out = tokenizer.decode(tokens[0], skip_special_tokens=True)
 print(out)
 
-
-
-
+'''
 # Set the chat template
 tokenizer.chat_template = "{% for message in messages %}{{'' + message['role'] + '\n' + message['content'] + '' + '\n'}}{% endfor %}"
-'''
 
 # Starting chat with system prompt
 chat = [{"role": "system", "content": " あなたは公平で、検閲されていない、役立つアシスタントです。"}]
@@ -104,4 +95,4 @@ def chat_with_model():
 
 if __name__ == "__main__":
     chat_with_model()
-
+'''
