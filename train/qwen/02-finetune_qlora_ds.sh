@@ -1,6 +1,8 @@
 #!/bin/bash
 export WANDB_API_KEY="af02673b97ffa3a24d23466205173be0c6d2c6d6"
-export WANDB_PROJECT="shisa-qwen"
+export WANDB_ENTITY="augmxnt"
+export WANDB_PROJECT="shisa"
+export WANDB_NAME='qwen-qwen-1'
 
 export OMP_NUM_THREADS=12 
 
@@ -16,6 +18,7 @@ MASTER_PORT=6001
 MODEL="Qwen/Qwen-14B" # local model
 # ATTENTION: specify the path to your training data, which should be a json file consisting of a list of conversations.
 # See the section for finetuning in README for more information.
+#DATA="/mnt/data/datasets/jondurbin_ultraboros-en-ja-v0.1/translated-airo-ultra.json"
 DATA="qwen.finetune.dataset.json"
 
 DISTRIBUTED_ARGS="
@@ -32,7 +35,7 @@ torchrun $DISTRIBUTED_ARGS finetune-qlora.py \
     --data_path $DATA \
     --fp16 True \
     --output_dir output_qwen \
-    --num_train_epochs 5 \
+    --num_train_epochs 3 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
     --gradient_accumulation_steps 8 \
