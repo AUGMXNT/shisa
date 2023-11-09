@@ -253,7 +253,7 @@ def call_openai(text):
         messages=[
             {
                 "role": "system",
-                "content": "Translate the text to Japanese."
+                "content": "Please translate the following to idiomatic Japanese. Take care to use the appropriate formality and tone, use natural diction, and to properly localize names, dates, addresses, citations, etc for native Japanese-only speakers:"
             },
             {
                 "role": "user",
