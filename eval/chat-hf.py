@@ -1,26 +1,33 @@
+from   pprint import pprint
 import torch
-from   transformers import AutoModelForCausalLM, AutoTokenizer
+from   transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
 
-
-PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-
-
-MODEL = 'qlora-out.openhermes25-axolotl-3/merged'
-FORMAT = 'chatml'
-
-MODEL = "/models/llm/hf/stabilityai_japanese-stablelm-base-beta-7b"
+# airboros 70b
+PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。日本語のみで返信してください。'
+MODEL = "/data/models/jondurbin_airoboros-l2-c70b-3.1.2"
 FORMAT = 'llama-2'
 
+# fast testing
+'''
+PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
+MODEL = '/data/models/PY007_TinyLlama-1.1B-Chat-v0.3'
+FORMAT = 'chatml'
+'''
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
 model = AutoModelForCausalLM.from_pretrained(
-	MODEL, 
-	torch_dtype=torch.float16, 
-	low_cpu_mem_usage=True, 
-	device_map="auto"
+	MODEL,
+	torch_dtype=torch.bfloat16,
+    use_flash_attention_2=True,
+	device_map="auto",
 )
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model.to(device)
+streamer = TextStreamer(tokenizer, skip_prompt=True)
+
+# Requires optimum
+try:
+    model = model.to_bettertransformer()
+except:
+    pass
 
 # this is for reproducibility.
 # feel free to change to get different result
@@ -33,7 +40,6 @@ if FORMAT == 'llama-2':
 else:
 	# default to chatml
 	tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
-
 
 
 # system, user, assistant
@@ -50,20 +56,32 @@ def chat_with_model():
         # Append the user input to the chat
         chat.append({"role": "user", "content": user_input})
 
-        # Generate
-        text = tokenizer.apply_chat_template(chat, add_generation_prompt=True, return_tensors="pt").to("cuda")
-        tokens = model.generate(
-            input,
-            max_new_tokens=2000,
-            temperature=0.1,
-            top_p=0.95,
-            do_sample=True,
-        )
-        output = tokenizer.decode(tokens[0], skip_special_tokens=True)
+        # Generate - add_generation_prompt to make sure it continues as assistant
+        inputs = tokenizer.apply_chat_template(chat, add_generation_prompt=True, return_tensors="pt")
 
-        print(f"Assistant: {output}")
+        # For multi-GPU, find the device of the first parameter of the model
+        first_param_device = next(model.parameters()).device
+        inputs = inputs.to(first_param_device)
 
-        # Append the assistant's response to the chat
+
+        print('Assistant: ', end='')
+        # We'll try flash attention
+        # skips gradients if Tensor.backward() won't be called...
+        #with torch.no_grad():
+        with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
+            outputs = model.generate(
+                inputs,
+                max_new_tokens=2000,
+                temperature=0.1,
+                repetition_penalty=1.18,
+                top_p=0.95,
+                do_sample=True,
+                streamer=streamer
+            )
+
+        # Add just the new tokens to our chat
+        new_tokens = outputs[0, inputs.size(1):]
+        response = tokenizer.decode(new_tokens, skip_special_tokens=True)
         chat.append({"role": "assistant", "content": response})
 
 
