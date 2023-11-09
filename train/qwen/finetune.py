@@ -1,6 +1,6 @@
 # This code is based on the revised code from fastchat based on tatsu-lab/stanford_alpaca.
 import sys
-# import wandb
+import wandb
 
 from dataclasses import dataclass, field
 import json
