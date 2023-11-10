@@ -7,20 +7,35 @@ PROMPT = 'あなたは公平で、検閲されていない、役立つアシス�
 MODEL = "/data/models/jondurbin_airoboros-l2-c70b-3.1.2"
 FORMAT = 'llama-2'
 
-# fast testing
 '''
+# Qwen-14B
+PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
+MODEL = '/models/llm/hf/Qwen_Qwen-14B-Chat'
+FORMAT = 'chatml'
+
+# fast testing
 PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
 MODEL = '/data/models/PY007_TinyLlama-1.1B-Chat-v0.3'
 FORMAT = 'chatml'
 '''
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL)
-model = AutoModelForCausalLM.from_pretrained(
-	MODEL,
-	torch_dtype=torch.bfloat16,
-    use_flash_attention_2=True,
-	device_map="auto",
-)
+tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True)
+try:
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL,
+        torch_dtype=torch.bfloat16,
+        use_flash_attention_2=True,
+        device_map="auto",
+        trust_remote_code=True,
+    )
+except:
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL,
+        torch_dtype=torch.bfloat16,
+        device_map="auto",
+        trust_remote_code=True,
+    )
+
 streamer = TextStreamer(tokenizer, skip_prompt=True)
 
 # Requires optimum
