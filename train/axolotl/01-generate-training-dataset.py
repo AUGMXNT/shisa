@@ -4,7 +4,7 @@ import sys
 
 # alpaca_w_system.load_open_orca
 
-conn = sqlite3.connect("shisa/translate/airoboros-3.1/airoboros.db")
+conn = sqlite3.connect("../../translate/airoboros-3.1/airoboros.db")
 
 # Create a cursor object
 conn.row_factory = sqlite3.Row
