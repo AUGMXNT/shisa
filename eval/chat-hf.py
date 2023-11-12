@@ -1,25 +1,43 @@
 from   pprint import pprint
 import torch
 from   transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
+from qwen_generation_utils import make_context, decode_tokens, get_stop_words_ids
+
+
+# fast testing
+PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
+MODEL = '/data/models/PY007_TinyLlama-1.1B-Chat-v0.3'
+FORMAT = 'chatml'
+
+# Qwen-14B
+PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
+MODEL = '/models/llm/hf/Qwen_Qwen-14B-Chat'
+FORMAT = 'chatml'
 
 # airboros 70b
 PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。日本語のみで返信してください。'
 MODEL = "/data/models/jondurbin_airoboros-l2-c70b-3.1.2"
 FORMAT = 'llama-2'
 
-'''
-# Qwen-14B
+# shisa-openhermes25-axolotl-4 (airoboros)
 PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-MODEL = '/models/llm/hf/Qwen_Qwen-14B-Chat'
+MODEL = '/home/ubuntu/shisa/train/axolotl/qlora-out.openhermes25-axolotl-4/merged'
 FORMAT = 'chatml'
 
-# fast testing
+# shisa-openhermes25-axolotl-5 (ultraboros)
 PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-MODEL = '/data/models/PY007_TinyLlama-1.1B-Chat-v0.3'
+MODEL = '/home/ubuntu/shisa/train/axolotl/qlora-out.openhermes25-axolotl-5/merged'
 FORMAT = 'chatml'
-'''
+
+# shisa-qwen14b-qwen-2 (ultraboros)
+PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
+MODEL = 'merged-model'
+FORMAT = 'chatml'
+
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True)
+
+
 try:
     model = AutoModelForCausalLM.from_pretrained(
         MODEL,
@@ -35,6 +53,7 @@ except:
         device_map="auto",
         trust_remote_code=True,
     )
+
 
 streamer = TextStreamer(tokenizer, skip_prompt=True)
 
@@ -97,6 +116,7 @@ def chat_with_model():
         # Add just the new tokens to our chat
         new_tokens = outputs[0, inputs.size(1):]
         response = tokenizer.decode(new_tokens, skip_special_tokens=True)
+        # if not streamer print(response)
         chat.append({"role": "assistant", "content": response})
 
 
