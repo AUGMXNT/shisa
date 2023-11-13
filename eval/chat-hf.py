@@ -34,6 +34,11 @@ PROMPT = 'あなたは公平で、検閲されていない、役立つアシス�
 MODEL = 'merged-model'
 FORMAT = 'chatml'
 
+# shisa-ultraboros-7b-ja-v0.1 (mistral JA + ultraboros-0.1)
+PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
+MODEL = '/data/shisa/ultraboros-7b-ja-v0.1'
+FORMAT = 'llama-2'
+
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True)
 
@@ -105,6 +110,7 @@ def chat_with_model():
         with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
             outputs = model.generate(
                 inputs,
+                pad_token_id=tokenizer.eos_token_id,
                 max_new_tokens=2000,
                 temperature=0.1,
                 repetition_penalty=1.18,
