@@ -47,7 +47,7 @@ for row in tqdm(rows):
     if conv_ja:
         formatted.append({
             'id': f'{_id}-ja',
-            'converations': conv_ja,
+            'conversations': conv_ja,
         })
 
 # Add additional rows for translations to/from en/ja.
