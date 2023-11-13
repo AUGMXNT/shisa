@@ -12,7 +12,7 @@ c = conn.cursor()
 # Load the tuning/training portions of the datasets.
 datasets = []
 for path in glob.glob('dataset_dir/tuning/*.json'):
-    dataset = Dataset.from_json(path).train_test_split(train_size=0.1, shuffle=False, seed=42)["train"]
+    dataset = Dataset.from_json(path).train_test_split(train_size=0.05, shuffle=False, seed=42)["train"]
     datasets.append(dataset)
 dataset = concatenate_datasets(datasets)
 
