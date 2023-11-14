@@ -45,7 +45,7 @@ dsir.fit_importance_estimator(num_tokens_to_fit='auto')
 dsir.compute_importance_weights()
 dsir.resample(out_dir='/mnt/data/madlad-en-sampled', num_to_sample=500000, cache_dir='/mnt/data/.cache/resampled-en')
 
-# Combine the samples into a single parquet.
+# Load the various EN/JA files.
 print(f"Unifying dataset...")
 sample_files = list(glob.glob("/mnt/data/madlad-ja-sampled/*.jsonl")) + list(glob.glob("/mnt/data/madlad-en-sampled/*.jsonl"))
 all_datasets = []
@@ -53,4 +53,12 @@ for path in sample_files:
     if os.stat(path).st_size:
         dataset = datasets.Dataset.from_json(path)
         all_datasets.append(dataset)
+
+# Add in the JP training data from lm-eval-jp:
+for path in glob.glob("/mnt/data/llm-eval-train-ds/tuning/*.json"):
+    dataset = datasets.Dataset.from_json(path)
+    dataset = dataset.remove_columns([col for col in dataset.column_names if col != "text"])
+    all_datasets.append(dataset)
+
+# Combine everything.
 datasets.concatenate_datasets(all_datasets).shuffle(seed=42).to_parquet("/mnt/data/madlad-pretrain-sample-v0.2.parquet")
