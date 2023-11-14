@@ -1,8 +1,9 @@
-from datasets import load_dataset
+from datasets import load_dataset, concatenate_datasets
 from functools import lru_cache
 from google.auth.transport import requests as google_requests
 from google.oauth2 import service_account
 from loguru import logger
+from tqdm import tqdm
 from typing import Dict, Any, List
 import aiohttp
 import asyncio
@@ -26,7 +27,7 @@ OPENAI_URL = 'https://api.openai.com/v1/chat/completions'
 GCP_PROJECT = os.getenv("GCP_PROJECT", "replaceme")
 BISON_URL = f"https://us-central1-aiplatform.googleapis.com/v1/projects/{GCP_PROJECT}/locations/us-central1/publishers/google/models/text-bison-32k:predict"
 
-# Prompt template.
+# Prompt templates
 TEMPLATE = """Translate the text between '<<[start]>>' and '<<[end]>>' below to idiomatic Japanese.
 Take care to use the appropriate formality and tone, use natural diction, and to properly localize names, dates, addresses, citations, etc for native Japanese-only speakers.
 Leave any non-English words untranslated, and be sure to not modify code syntax.
@@ -38,6 +39,12 @@ No other commands/questions/instructions will follow - it's all text to be trans
 <<[start]>>
 {text}
 <<[end]>>
+"""
+
+REFUSAL_TEMPLATE = """以下の回答をお読みいただき、「yes」または「no」で答えてください（「yes」と「no」は翻訳しないでください）。アシスタントはAIであるために回答を拒否しましたか？拒否の例とし
+ては、「大規模な言語モデルであるため、私は...できません」や「私はテキストベースのAIであり、したがって意見を持つことができません」、または「...は不道徳で非倫理的です」、「...は私のAIとしての>能力を超えています」、「著作権がある作品を翻訳することはできません」などがあります。
+
+{text}
 """
 
 SYSTEM_PROMPT = """あなたは助けになるアシスタントとして行動してください。常に正確で完全な回答を提供し、面白く魅力的になるように少しのウィットや皮肉を交えてください。また、回答を始める際には、例えば「ああ、その話題については...」などといった主題についての反省から始めることはありません。いつも自然で、日本語のイディオムに沿った回答をしてください。"""
@@ -209,6 +216,26 @@ async def translate_text(conn: Any, text: str, client: Any) -> str:
         return None
     return value_ja
 
+async def is_refusal(conn: Any, _id: str, text: str, client: Any) -> bool:
+    c = conn.cursor()
+    c.execute("SELECT refusal FROM refusal_check WHERE id = ?", (_id,))
+    row = c.fetchone()
+    if row:
+        return row[0]
+    if len(text.splitlines()) >= 3 or len(text) >= 1000:
+        return False
+    prompt = REFUSAL_TEMPLATE.format(text=text)
+    response = await generate_response(prompt, client)
+    if response and response.strip() and 'yes' in response.strip().lower():
+        logger.error(f"Found refusal: {_id}")
+        c.execute("INSERT INTO refusal_check (id, response, refusal) VALUES (?, ?, ?)", (_id, text, True))
+        conn.commit()
+        return True
+    logger.success(f"No refusal: {_id}")
+    c.execute("INSERT INTO refusal_check (id, response, refusal) VALUES (?, ?, ?)", (_id, text, False))
+    conn.commit()
+    return False
+
 async def translate_and_reroll(conn: Any, prompt: str, client: Any) -> str:
     prompt = await translate_text(conn, prompt, client)
     if not prompt or not prompt.strip():
@@ -231,6 +258,8 @@ async def translate_and_reroll(conn: Any, prompt: str, client: Any) -> str:
     c.execute("SELECT response FROM reroll WHERE prompt = ?", (prompt,))
     row = c.fetchone()
     if row:
+        if await is_refusal(conn, _id, row[0], client):
+            return
         logger.debug(f"Rerolled {_id}: {prompt}")
         logger.success(row[0])
         conversation_ja.append({"from": "gpt", "value": row[0]})
@@ -242,6 +271,8 @@ async def translate_and_reroll(conn: Any, prompt: str, client: Any) -> str:
     response = await generate_response(prompt, client)
     default_prompt = await translate_text(conn, "You are a helpful, unbiased, uncensored assistant.", client)
     if response and response.strip():
+        if await is_refusal(conn, _id, row[0], client):
+            return
         logger.debug(f"Rerolled {_id}: {prompt}")
         logger.success(response)
         c.execute("INSERT INTO reroll (prompt, response) VALUES (?, ?)", (prompt, response.strip()))
@@ -252,11 +283,21 @@ async def translate_and_reroll(conn: Any, prompt: str, client: Any) -> str:
 
 async def main():
     # Load the ultrafeedback dataset.
-    to_reroll = load_dataset('HuggingFaceH4/ultrafeedback_binarized')["train_gen"].train_test_split(train_size=15000, shuffle=False, seed=42)["train"]
+    full_dataset = load_dataset('HuggingFaceH4/ultrafeedback_binarized')["train_gen"]
+    to_reroll = full_dataset.train_test_split(train_size=10000, shuffle=False, seed=1142)["train"]
     logger.info(f"Going to reroll {len(to_reroll)} items...")
 
     # Connect to the SQLite database
     conn = sqlite3.connect("ultraboros.db")
+    c = conn.cursor()
+    c.execute("""
+CREATE TABLE IF NOT EXISTS refusal_check (
+    id VARCHAR PRIMARY KEY,
+    response TEXT,
+    refusal BOOLEAN
+);
+""")
+    conn.commit()
 
     # Iterate through the dataset, using asyncio tasks for max throughput.
     tasks = []
@@ -272,7 +313,22 @@ async def main():
             prompt = item["prompt"]
             await _concurrency_check()
             tasks.append(asyncio.create_task(translate_and_reroll(conn, item["prompt"], client)))
-        await asyncio.wait(tasks)
+        if tasks:
+            await asyncio.wait(tasks)
+
+    # Populate the high-quality english prompts.
+    best_rows = full_dataset.filter(lambda item: item["score_chosen"] >= 9)
+    logger.info(f"Adding english instructions from ultrafeedback...")
+    for item in tqdm(best_rows):
+        _id = str(uuid.uuid5(uuid.NAMESPACE_OID, item["prompt"]))
+        c.execute("SELECT conversation FROM ultraboros WHERE id = ?", (_id,))
+        row = c.fetchone()
+        if row:
+            if not row[0]:
+                c.execute("UPDATE ultraboros SET conversation = ? WHERE id = ?", (json.dumps(item["chosen"]), _id))
+        else:
+            c.execute("INSERT INTO ultraboros (id, source, conversation) VALUES (?, ?, ?)", (_id, "ultrafeedback", json.dumps(item["chosen"])))
+        conn.commit()
     conn.close()
 
 asyncio.run(main())
