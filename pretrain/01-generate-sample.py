@@ -48,11 +48,9 @@ dsir.resample(out_dir='/mnt/data/madlad-en-sampled', num_to_sample=500000, cache
 # Combine the samples into a single parquet.
 print(f"Unifying dataset...")
 sample_files = list(glob.glob("/mnt/data/madlad-ja-sampled/*.jsonl")) + list(glob.glob("/mnt/data/madlad-en-sampled/*.jsonl"))
-datasets = []
+all_datasets = []
 for path in sample_files:
-    try:
+    if os.stat(path).st_size:
         dataset = datasets.Dataset.from_json(path)
-        datasets.append(dataset)
-    except Exception as exc:
-        print(f"Error loading {path}: {exc}")
-datasets.concatenate_datasets(datasets).shuffle(seed=42).to_parquet("/mnt/data/madlad-pretrain-sample-v0.2.parquet")
+        all_datasets.append(dataset)
+datasets.concatenate_datasets(all_datasets).shuffle(seed=42).to_parquet("/mnt/data/madlad-pretrain-sample-v0.2.parquet")
