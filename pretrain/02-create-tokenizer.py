@@ -27,7 +27,7 @@ def batch_iterator():
 # Train a new mistral tokenizer from the dataset.
 tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1", use_fast=True)
 new_tokenizer = tokenizer.train_new_from_iterator(batch_iterator(), vocab_size=32000, max_token_length=8)
-new_tokenizer.save_pretrained("/mnt/data/mistral-7b-tokenizer-ja")
+new_tokenizer.save_pretrained("/mnt/data/mistral-7b-tokenizer-ja-temp")
 
 # Load the original tokenizer.
 snapshot_download(repo_id='mistralai/Mistral-7B-v0.1', local_dir='mistral-7b', cache_dir='.cache', local_dir_use_symlinks=False, allow_patterns=['tokenizer.json'])
@@ -35,7 +35,7 @@ with open("mistral-7b/tokenizer.json") as f:
     original = json.load(f)
 
 # Load the updated tokenizer we just trained.
-with open("mistral-7b-tokenizer-ja/tokenizer.json") as f:
+with open("mistral-7b-tokenizer-ja-temp/tokenizer.json") as f:
     append = json.load(f)
 
 def merge_tokenizer(data1: dict, data2: dict):
@@ -74,7 +74,8 @@ def merge_tokenizer(data1: dict, data2: dict):
     data_out["model"]["vocab"] = vocab_out
     data_out["model"]["merges"] = merges_out
 
-    with open("mistral-ja-tokenizer.json", "w") as f:
+    tokenizer.save_pretrained("mistral-7b-tokenizer-ja")
+    with open("mistral-7b-tokenizer-ja/tokenizer.json", "w") as f:
         json.dump(data_out, f, ensure_ascii=False, indent=2)
 
 # 上で定義した関数により、元のtokenizerと追加したいtokenizerをmerge
