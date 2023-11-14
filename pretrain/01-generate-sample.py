@@ -18,6 +18,7 @@ snapshot_download(
     repo_type='dataset'
 )
 
+print(f"Extracting gzips...")
 current_path = os.getcwd()
 for path in map(str, glob.glob('/mnt/data/madlad-400/data/*/*clean*.gz', recursive=True)):
     print(f"Extracting: {path}")
@@ -25,20 +26,27 @@ for path in map(str, glob.glob('/mnt/data/madlad-400/data/*/*clean*.gz', recursi
     subprocess.run(["gunzip", path])
 
 # Sample JA datasets.
+print(f"Sampling JA datasets...")
+with open('/mnt/data/madlad-400-ja-sample.jsonl', 'a+') as outfile:
+    ...
 ja_datasets = glob.glob('/mnt/data/madlad-400/data/ja/ja_clean_*')
-dsir = HashedNgramDSIR(ja_datasets, [], cache_dir='/mnt/data/.cache/dsir')
+dsir = HashedNgramDSIR(ja_datasets, ["/mnt/data/madlad-400-ja-sample.jsonl"], cache_dir='/mnt/data/.cache/dsir')
 dsir.fit_importance_estimator(num_tokens_to_fit='auto')
 dsir.compute_importance_weights()
 dsir.resample(out_dir='/mnt/data/madlad-ja-sampled', num_to_sample=5000000, cache_dir='/mnt/data/.cache/resampled')
 
 # Sample EN datasets at a much lower ratio.
+print(f"Sampling EN datasets...")
+with open('/mnt/data/madlad-400-en-sample.jsonl', 'a+') as outfile:
+        ...
 en_datasets = glob.glob('/mnt/data/madlad-400/data/en/en_clean_*')
-dsir = HashedNgramDSIR(en_datasets, [], cache_dir='/mnt/data/.cache/dsir-en')
+dsir = HashedNgramDSIR(en_datasets, ["/mnt/data/madlad-400-en-sample.jsonl"], cache_dir='/mnt/data/.cache/dsir-en')
 dsir.fit_importance_estimator(num_tokens_to_fit='auto')
 dsir.compute_importance_weights()
 dsir.resample(out_dir='/mnt/data/madlad-en-sampled', num_to_sample=500000, cache_dir='/mnt/data/.cache/resampled-en')
 
 # Combine the samples into a single parquet.
+print(f"Unifying dataset...")
 sample_files = list(glob.glob("/mnt/data/madlad-ja-sampled/*.jsonl")) + list(glob.glob("/mnt/data/madlad-en-sampled/*.jsonl"))
 datasets = []
 for path in sample_files:
@@ -47,4 +55,4 @@ for path in sample_files:
         datasets.append(dataset)
     except Exception as exc:
         print(f"Error loading {path}: {exc}")
-datasets.concatenate_datasets(datasets).to_parquet("/mnt/data/madlad-pretrain-sample-v0.2.parquet")
+datasets.concatenate_datasets(datasets).shuffle(seed=42).to_parquet("/mnt/data/madlad-pretrain-sample-v0.2.parquet")
