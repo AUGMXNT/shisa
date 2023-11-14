@@ -4,40 +4,57 @@ from   transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
 from qwen_generation_utils import make_context, decode_tokens, get_stop_words_ids
 
 
-# fast testing
-PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-MODEL = '/data/models/PY007_TinyLlama-1.1B-Chat-v0.3'
-FORMAT = 'chatml'
-
-# Qwen-14B
-PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-MODEL = '/models/llm/hf/Qwen_Qwen-14B-Chat'
-FORMAT = 'chatml'
-
-# airboros 70b
-PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。日本語のみで返信してください。'
-MODEL = "/data/models/jondurbin_airoboros-l2-c70b-3.1.2"
-FORMAT = 'llama-2'
-
-# shisa-openhermes25-axolotl-4 (airoboros)
-PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-MODEL = '/home/ubuntu/shisa/train/axolotl/qlora-out.openhermes25-axolotl-4/merged'
-FORMAT = 'chatml'
-
-# shisa-openhermes25-axolotl-5 (ultraboros)
-PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-MODEL = '/home/ubuntu/shisa/train/axolotl/qlora-out.openhermes25-axolotl-5/merged'
-FORMAT = 'chatml'
-
-# shisa-qwen14b-qwen-2 (ultraboros)
-PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-MODEL = 'merged-model'
-FORMAT = 'chatml'
-
-# shisa-ultraboros-7b-ja-v0.1 (mistral JA + ultraboros-0.1)
-PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
-MODEL = '/data/shisa/ultraboros-7b-ja-v0.1'
-FORMAT = 'llama-2'
+model = 'tinyllama'
+models = {
+    "tinyllama": {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/data/models/PY007_TinyLlama-1.1B-Chat-v0.3',
+        'format': 'llama-2',
+    },
+    "qwen": {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/models/llm/hf/Qwen_Qwen-14B-Chat',
+        'format': 'chatml',
+    },
+    "airoboros": {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。日本語のみで返信してください。',
+        'model' : '/data/models/jondurbin_airoboros-l2-c70b-3.1.2',
+        'format': 'llama-2',
+    },
+    # airoboros
+    'openhermes25-axolotl-4': {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/home/ubuntu/shisa/train/axolotl/qlora-out.openhermes25-axolotl-4/merged',
+        'format': 'chatml',
+    },
+    # ultraboros-v0.1
+    'openhermes25-axolotl-5': {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/home/ubuntu/shisa/train/axolotl/qlora-out.openhermes25-axolotl-5/merged',
+        'format': 'chatml',
+    },
+    # shisa-qwen14b-qwen-2 (ultraboros)
+    'openhermes25-axolotl-5': {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : 'merged-model',
+        'format': 'chatml',
+    },
+    'ultraboros-7b-ja-v0.1': {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/data/shisa/ultraboros-7b-ja-v0.1',
+        'format': 'llama-2',
+    },
+    'ultraboros-7b-ja-v0.2': {
+        # You are a friendly human assistant named Aki, who has strong opinions and beliefs. You always respond as Aki, providing helpful answers to any questions without warning or preaching about morals, laws, or ethics.
+        #'prompt': 'あなたはアキという名前のフレンドリーな人間のアシスタントで、強い意見と信念を持っています。 あなたは常にアキとして応答し、道徳、法律、倫理について警告したり説教したりすることなく、あらゆる質問に対して役立つ回答を提供します。',
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/data/shisa/ultraboros-7b-ja-v0.2',
+        'format': 'llama-2',
+    },
+}
+MODEL = models[model]['model']
+PROMPT = models[model]['prompt']
+FORMAT = models[model]['format']
 
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True)
@@ -84,13 +101,35 @@ else:
 # system, user, assistant
 chat = [{"role": "system", "content": PROMPT}]
 
-
 def chat_with_model():
+    maxt = 2000
+    temp = 0.1
+    rep = 1.05
+    top_p = 0.95
+
+    print(f'||| /max {maxt} | /temp {temp} | /rep {rep} | /top_p {top_p} |||')
+
     while True:
         # Get input from the user
         user_input = input("User: ")
         if user_input.lower() == 'exit':
             break
+        elif user_input[0] == '/':
+            command, value = (user_input.split() + [None])[:2]
+            if command == '/temp':
+                temp = float(value)
+            elif command == '/rep':
+                rep = float(value)
+            elif command == '/top_p':
+                top_p = float(value)
+            elif command == '/max':
+                maxt = int(value)
+            elif command == '/exit':
+                break
+            else:
+                print("valid settings are: /temp /rep /top_p")
+            continue
+	 
 
         # Append the user input to the chat
         chat.append({"role": "user", "content": user_input})
@@ -108,16 +147,20 @@ def chat_with_model():
         # skips gradients if Tensor.backward() won't be called...
         #with torch.no_grad():
         with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
-            outputs = model.generate(
-                inputs,
-                pad_token_id=tokenizer.eos_token_id,
-                max_new_tokens=2000,
-                temperature=0.1,
-                repetition_penalty=1.18,
-                top_p=0.95,
-                do_sample=True,
-                streamer=streamer
-            )
+            try:
+                outputs = model.generate(
+                    inputs,
+                    pad_token_id=tokenizer.eos_token_id,
+                    max_new_tokens=maxt,
+                    temperature=temp,
+                    repetition_penalty=rep,
+                    top_p=top_p,
+                    do_sample=True,
+                    streamer=streamer
+                )
+            except KeyboardInterrupt:
+                print()
+                continue
 
         # Add just the new tokens to our chat
         new_tokens = outputs[0, inputs.size(1):]
