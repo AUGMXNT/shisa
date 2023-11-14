@@ -9,6 +9,7 @@ dataset = concatenate_datasets(
     [
         Dataset.from_json(path)
         for path in glob.glob('/mnt/data/madlad-ja-sampled/*.jsonl')
+        if os.stat(path).st_size
     ]
 ).shuffle(seed=42).select(range(1000000))
 
