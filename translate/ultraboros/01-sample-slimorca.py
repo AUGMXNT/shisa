@@ -7,6 +7,7 @@ import datasets
 import glob
 import json
 import os
+import re
 import sqlite3
 import uuid
 from shisa_utils import (
@@ -81,6 +82,11 @@ def populate_db(conn):
         if "translat" in prompt or len(prompt) / len(prompt.encode()) <= 0.95:
             skipped += 1
             continue
+
+        # Some of the instructions are also not super useful for JA, like instructions to add missing spaces.
+        if len(re.findall(r'\w{15,}', prompt)) >= 7:
+            skipped += 1
+            continue
         c.execute("SELECT id FROM ultraboros WHERE id = ?", (item["id"],))
         row = c.fetchone()
         if not row:
@@ -89,7 +95,7 @@ def populate_db(conn):
                 (item["id"], "slimorca", json.dumps(item["conversations"])),
             )
             conn.commit()
-    logger.warning(f"Skipped {skipped} translation tasks...")
+    logger.warning(f"Skipped {skipped} translation/spacing tasks...")
 
 
 async def main():
