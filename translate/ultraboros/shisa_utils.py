@@ -129,14 +129,15 @@ async def post_openai(body: Dict[str, Any], client: Any):
 
 
 def cleanup_tags(text: str) -> str:
-    if "<<[end]>>" not in text and "<<[start]>>" not in text:
+    if "<[end]>" not in text and "<[start]>" not in text:
         return text.strip()
-    parts = text.split("<<[end]>>")
+    end_tag = "<<[end]>>" if "<<[end]>>" in text else "<[end]>"
+    parts = text.split(end_tag)
     if len(parts) == 1:
-        return text.replace("<<[start]>>", "").strip()
+        return text.replace("<<[start]>>", "").replace("<[start]>", "").strip()
     if len(parts) > 2:
         logger.error(f"Found trailing garbage: {parts[1:]}")
-    return parts[0].replace("<<[start]>>", "").strip()
+    return parts[0].replace("<<[start]>>", "").replace("<[start]>", "").strip()
 
 
 # Translate a single input text, which handles posting to bison and extracting response.
