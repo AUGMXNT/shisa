@@ -25,7 +25,7 @@ OPENAI_URL = 'https://api.openai.com/v1/chat/completions'
 
 # GCP variables.
 GCP_PROJECT = os.getenv("GCP_PROJECT", "replaceme")
-BISON_URL = f"https://us-central1-aiplatform.googleapis.com/v1/projects/{GCP_PROJECT}/locations/us-central1/publishers/google/models/text-bison-32k:predict"
+BISON_URL = f"https://us-central1-aiplatform.googleapis.com/v1/projects/{GCP_PROJECT}/locations/us-central1/publishers/google/models/{{model}}:predict"
 
 # Prompt templates
 TEMPLATE = """Translate the text between '<<[start]>>' and '<<[end]>>' below to idiomatic Japanese.
@@ -87,8 +87,13 @@ async def handle_bison_error(result):
 
 @backoff.on_exception(backoff.expo, (RetriableError,))
 async def post_bison(body: Dict[str, Any], client: Any):
+    model = "text-bison-32k"
+    if len(body["instances"][0]["content"]) <= 2500:
+        model = "text-bison"
+        body["parameters"]["maxDecodeSteps"] = 2048
+    url = BISON_URL.format(model=model)
     async with client.post(
-        BISON_URL, json=body, headers={"Authorization": f"Bearer {get_vertexai_token()}"}
+        url, json=body, headers={"Authorization": f"Bearer {get_vertexai_token()}"}
     ) as result:
         if result.status != 200:
             await handle_bison_error(result)
@@ -247,7 +252,7 @@ async def translate_turns(conn: Any, id_: str, turns: List[Dict[str, Any]], clie
         value_ja = await translate_text(conn, value, client)
         if not value_ja:
             return
-        if await is_refusal(value_ja):
+        if await is_refusal(conn, str(uuid.uuid5(uuid.NAMESPACE_OID, value_ja)), value_ja, client):
             return
         if 'role' in translated[-1]:
             translated[-1]['from'] = translated[-1].pop('role')
