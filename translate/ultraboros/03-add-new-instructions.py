@@ -1,6 +1,5 @@
 import json
 import sqlite3
-import re
 import uuid
 
 # Load Sqlite DB
@@ -23,7 +22,10 @@ for item in new_items:
         {
             "from": "gpt",
             "value": item["response"],
-        }
+        },
     ]
-    c.execute("INSERT INTO ultraboros (id, source, conversation_ja) VALUES (?, ?, ?) ON CONFLICT DO NOTHING", (_id, "airoboros_ja_new", json.dumps(conversation)))
+    c.execute(
+        "INSERT INTO ultraboros (id, source, conversation_ja) VALUES (?, ?, ?) ON CONFLICT DO NOTHING",
+        (_id, "airoboros_ja_new", json.dumps(conversation)),
+    )
     conn.commit()
