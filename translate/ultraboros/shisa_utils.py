@@ -235,3 +235,24 @@ async def is_refusal(conn: Any, _id: str, text: str, client: Any) -> bool:
     c.execute("INSERT INTO refusal_check (id, response, refusal) VALUES (?, ?, ?)", (_id, text, False))
     conn.commit()
     return False
+
+async def translate_turns(conn: Any, id_: str, turns: List[Dict[str, Any]], client: Any):
+    cursor = conn.cursor()
+    translated = []
+    for turn in turns:
+        translated.append(copy.deepcopy(turn))
+        value = turn.get('content', turn.get('value'))
+        if not value:
+            return
+        value_ja = await translate_text(conn, value, client)
+        if not value_ja:
+            return
+        if await is_refusal(value_ja):
+            return
+        if 'role' in translated[-1]:
+            translated[-1]['from'] = translated[-1].pop('role')
+        translated[-1]["value"] = value_ja
+        translated[-1].pop('content', None)
+    translated_as_json = json.dumps(translated)
+    cursor.execute("UPDATE ultraboros SET conversation_ja = ? WHERE id = ?", (translated_as_json, id_))
+    conn.commit()
