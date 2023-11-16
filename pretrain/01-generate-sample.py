@@ -9,17 +9,17 @@ from loguru import logger
 from tqdm import tqdm
 
 logger.info("Downloading data files...")
-snapshot_download(
-   repo_id='allenai/madlad-400',
-   local_dir='/mnt/data/madlad-400',
-   cache_dir='/mnt/data/.cache',
-   local_dir_use_symlinks=False,
-   allow_patterns=[
-       'data/ja/ja_clean_*.gz',
-       'data/en/en_clean_000*.gz',
-   ],
-   repo_type='dataset'
-)
+# snapshot_download(
+#    repo_id='allenai/madlad-400',
+#    local_dir='/mnt/data/madlad-400',
+#    cache_dir='/mnt/data/.cache',
+#    local_dir_use_symlinks=False,
+#    allow_patterns=[
+#        'data/ja/ja_clean_*.gz',
+#        'data/en/en_clean_000*.gz',
+#    ],
+#    repo_type='dataset'
+# )
 
 logger.info("Extracting gzips...")
 current_path = os.getcwd()
@@ -222,8 +222,8 @@ for item in tqdm(
 
 # winogrande
 logger.info("Loading winogrande training data...")
-for item in (
-    tqdm(datasets.load_dataset("winogrande", "winogrande_xl", split="train"))
+for item in tqdm(
+    datasets.load_dataset("winogrande", "winogrande_xl", split="train")
     .shuffle(seed=42)
     .select(range(20000))
 ):
@@ -237,7 +237,7 @@ for item in (
 
 # ARC-Challenge.
 logger.info("Loading ARC-Challenge training data...")
-for item in datasets.load_dataset("ai2_arc", "ARC-Challenge", split="train"):
+for item in tqdm(datasets.load_dataset("ai2_arc", "ARC-Challenge", split="train")):
     text = "\n".join(
         [
             item["question"],
@@ -253,7 +253,7 @@ for item in datasets.load_dataset("ai2_arc", "ARC-Challenge", split="train"):
     training_data.append({"text": text})
 
 # Python.
-for item in datasets.load_dataset("Vezora/Tested-188k-Python-Alpaca", split="train"):
+for item in tqdm(datasets.load_dataset("Vezora/Tested-188k-Python-Alpaca", split="train")):
     if (item["input"] or "").strip():
         continue
     text = "\n".join(
