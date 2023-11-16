@@ -26,7 +26,10 @@ def batch_iterator():
 
 # Train a new mistral tokenizer from the dataset.
 tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1", use_fast=True)
-new_tokenizer = tokenizer.train_new_from_iterator(batch_iterator(), vocab_size=32000, max_token_length=8)
+
+# Targetting 2^17 tokenizer vocab size, leaving room for 10 additional tokens (chat-ml, etc.)
+new_vocab_size = 2 ** 17 - len(tokenizer) - 10
+new_tokenizer = tokenizer.train_new_from_iterator(batch_iterator(), vocab_size=new_vocab_size, max_token_length=24)
 new_tokenizer.save_pretrained("/mnt/data/mistral-7b-tokenizer-ja-temp")
 
 # Load the original tokenizer.
