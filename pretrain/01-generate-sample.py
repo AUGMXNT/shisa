@@ -183,7 +183,7 @@ logger.info("Loading natural instructions training data...")
 for item in tqdm(
     datasets.load_dataset("Muennighoff/natural-instructions", split="train")
     .shuffle(seed=42)
-    .select(range(50000))
+    .select(range(20000))
 ):
     text = "\n".join(
         [
@@ -210,7 +210,7 @@ logger.info("Loading P3 training data...")
 for item in tqdm(
     datasets.load_dataset("Muennighoff/P3", split="train")
     .shuffle(seed=42)
-    .select(range(50000))
+    .select(range(20000))
 ):
     text = "\n".join(
         [
