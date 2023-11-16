@@ -9,17 +9,17 @@ from loguru import logger
 from tqdm import tqdm
 
 logger.info("Downloading data files...")
-# snapshot_download(
-#    repo_id='allenai/madlad-400',
-#    local_dir='/mnt/data/madlad-400',
-#    cache_dir='/mnt/data/.cache',
-#    local_dir_use_symlinks=False,
-#    allow_patterns=[
-#        'data/ja/ja_clean_*.gz',
-#        'data/en/en_clean_000*.gz',
-#    ],
-#    repo_type='dataset'
-# )
+snapshot_download(
+    repo_id='allenai/madlad-400',
+    local_dir='/mnt/data/madlad-400',
+    cache_dir='/mnt/data/.cache',
+    local_dir_use_symlinks=False,
+    allow_patterns=[
+        'data/ja/ja_clean_*.gz',
+        'data/en/en_clean_000*.gz',
+    ],
+    repo_type='dataset'
+)
 
 logger.info("Extracting gzips...")
 current_path = os.getcwd()
