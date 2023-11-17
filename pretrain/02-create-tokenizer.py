@@ -57,7 +57,7 @@ def merge_tokenizer(data1: dict, data2: dict):
 
     # vocab2のうちvocab1にないものを、idxをインクリメントしつつvocab_outに追加
     for token in vocab2.keys():
-        if token not in vocab1:
+        if token not in vocab1 and not (re.search(r'[0-9]', token) and re.match('^([^\w]|[0-9])+$', token)):
             idx += 1
             vocab_out[token] = idx
 
@@ -72,6 +72,8 @@ def merge_tokenizer(data1: dict, data2: dict):
             right_id = vocab_out.get(right, None)
 
             if left_id is not None and right_id is not None:
+                if re.search(r'[0-9]', left) and re.match('^([^\w]|[0-9])+$', left) and re.search(r'[0-9]', right) and re.match('^([^\w]|[0-9])+$', right):
+                    continue
                 merges_out += [f"{left} {right}"]
 
     data_out["model"]["vocab"] = vocab_out
