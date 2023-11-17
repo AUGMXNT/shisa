@@ -44,7 +44,7 @@ dsir.fit_importance_estimator(num_tokens_to_fit="auto")
 dsir.compute_importance_weights()
 dsir.resample(
     out_dir="/mnt/data/madlad-ja-sampled",
-    num_to_sample=2500000,
+    num_to_sample=4000000,
     cache_dir="/mnt/data/.cache/resampled",
 )
 
@@ -62,7 +62,7 @@ dsir.fit_importance_estimator(num_tokens_to_fit="auto")
 dsir.compute_importance_weights()
 dsir.resample(
     out_dir="/mnt/data/madlad-en-sampled",
-    num_to_sample=250000,
+    num_to_sample=400000,
     cache_dir="/mnt/data/.cache/resampled-en",
 )
 
@@ -80,6 +80,8 @@ for path in sample_files:
 # Add in the JP training data from lm-eval-jp:
 for path in glob.glob("/mnt/data/llm-eval-train-ds/tuning/*.json"):
     dataset = datasets.Dataset.from_json(path)
+    if len(dataset) >= 75000:
+        dataset = dataset.shuffle(seed=42).select(range(75000))
     dataset = dataset.remove_columns(
         [col for col in dataset.column_names if col != "text"]
     )
@@ -269,5 +271,5 @@ all_datasets.append(datasets.Dataset.from_list(training_data))
 
 # Combine everything.
 datasets.concatenate_datasets(all_datasets).shuffle(seed=42).to_parquet(
-    "/mnt/data/madlad-pretrain-sample-v0.2.parquet"
+    "/mnt/data/madlad-pretrain-sample-combined.parquet"
 )
