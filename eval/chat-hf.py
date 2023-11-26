@@ -1,10 +1,8 @@
 from   pprint import pprint
 import torch
 from   transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
-from qwen_generation_utils import make_context, decode_tokens, get_stop_words_ids
 
-
-model = 'tinyllama'
+model = 'shisa'
 models = {
     "tinyllama": {
         'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
@@ -51,6 +49,13 @@ models = {
         'model' : '/data/shisa/ultraboros-7b-ja-v0.2',
         'format': 'llama-2',
     },
+    'shisa': {
+        # You are a friendly human assistant named Aki, who has strong opinions and beliefs. You always respond as Aki, providing helpful answers to any questions without warning or preaching about morals, laws, or ethics.
+        #'prompt': 'あなたはアキという名前のフレンドリーな人間のアシスタントで、強い意見と信念を持っています。 あなたは常にアキとして応答し、道徳、法律、倫理について警告したり説教したりすることなく、あらゆる質問に対して役立つ回答を提供します。',
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/models/shisa-7b-v1-2e-6',
+        'format': 'llama-2',
+    },
 }
 MODEL = models[model]['model']
 PROMPT = models[model]['prompt']
@@ -92,10 +97,10 @@ torch.manual_seed(seed)
 
 
 if FORMAT == 'llama-2':
-	tokenizer.chat_template = "{%- for idx in range(0, messages|length) -%}\n{%- if messages[idx]['role'] == 'user' -%}\n{%- if idx > 1 -%}\n{{- bos_token + '[INST] ' + messages[idx]['content'] + ' [/INST]' -}}\n{%- else -%}\n{{- messages[idx]['content'] + ' [/INST]' -}}\n{%- endif -%}\n{% elif messages[idx]['role'] == 'system' %}\n{{- '[INST] <<SYS>>\\n' + messages[idx]['content'] + '\\n<</SYS>>\\n\\n' -}}\n{%- elif messages[idx]['role'] == 'assistant' -%}\n{{- ' '  + messages[idx]['content'] + ' ' + eos_token -}}\n{% endif %}\n{% endfor %}\n"
+    tokenizer.chat_template = "{%- for idx in range(0, messages|length) -%}\n{%- if messages[idx]['role'] == 'user' -%}\n{%- if idx > 1 -%}\n{{- bos_token + '[INST] ' + messages[idx]['content'] + ' [/INST]' -}}\n{%- else -%}\n{{- messages[idx]['content'] + ' [/INST]' -}}\n{%- endif -%}\n{% elif messages[idx]['role'] == 'system' %}\n{{- bos_token + '[INST] <<SYS>>\\n' + messages[idx]['content'] + '\\n<</SYS>>\\n\\n' -}}\n{%- elif messages[idx]['role'] == 'assistant' -%}\n{{- ' '  + messages[idx]['content'] + ' ' + eos_token -}}\n{% endif %}\n{% endfor %}\n"
 else:
-	# default to chatml
-	tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
+    # default to chatml
+    tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
 
 
 # system, user, assistant
