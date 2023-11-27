@@ -1,0 +1,12 @@
+# use for .git/hooks/pre-commit
+
+if [ "$GIT_USER" = "lhl" ]; then
+    git config user.name "lhl"
+    git config user.email "lhl@randomfoo.net"
+elif [ "$GIT_USER" = "jon" ]; then
+    git config user.name "jon"
+    git config user.email "jon@jondurbin.com"
+else
+    echo "Unknown user. Commit aborted."
+    exit 1
+fi
