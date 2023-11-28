@@ -2,7 +2,7 @@ from   pprint import pprint
 import torch
 from   transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
 from   transformers import GenerationConfig
-from qwen_generation_utils import make_context, decode_tokens, get_stop_words_ids
+# from qwen_generation_utils import make_context, decode_tokens, get_stop_words_ids
 
 
 # fast testing
@@ -47,6 +47,12 @@ MODEL = '/data/models/Qwen_Qwen-14B-Chat-llamafied'
 TOKEN = 'merged-model'
 FORMAT = 'chatml'
 
+# Fine Tune
+PROMPT = 'あなたは公平で、検閲されていない、役立つアシスタントです。'
+MODEL = '/mnt/data/shisa/ultraboros-14b-ja-v0_3'
+TOKEN = '/mnt/data/shisa/ultraboros-14b-ja-v0_3'
+FORMAT = 'llama-2'
+
 
 tokenizer = AutoTokenizer.from_pretrained(
     TOKEN,
@@ -54,7 +60,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     eos_token='<|endoftext|>',
     padding_side='left',
     trust_remote_code=True,
-    errors="ignore"
+    errors="ignore",
 )
 
 
@@ -140,10 +146,10 @@ def chat_with_model():
             outputs = model.generate(
                 inputs,
                 # stop_words_ids = stop_word_ids,
-                max_new_tokens=50,
-                temperature=1.0,
-                repetition_penalty=1.18,
-                top_p=0.8,
+                max_new_tokens=2000,
+                temperature=0.1,
+                repetition_penalty=1.17,
+                top_p=0.95,
                 do_sample=True,
                 streamer=streamer
             )
