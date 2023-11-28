@@ -1,0 +1,19 @@
+{
+    "AVR": "0.7320",
+    "MC": "0.8800",
+    "NLI": "0.7400",
+    "QA": "0.4189",
+    "RC": "0.8893",
+    "jamp_exact_match": "0.4800",
+    "janli_exact_match": "0.9800",
+    "jcommonsenseqa_exact_match": "0.8800",
+    "jemhopqa_char_f1": "0.4737",
+    "jnli_exact_match": "0.8300",
+    "jsem_exact_match": "0.7200",
+    "jsick_exact_match": "0.6900",
+    "jsquad_char_f1": "0.8893",
+    "jsts_pearson": "0.9122",
+    "jsts_spearman": "0.8752",
+    "niilc_char_f1": "0.3640",
+    "csv_line": "0.7320,0.8800,0.7400,0.4189,0.8893,0.4800,0.9800,0.8800,0.4737,0.8300,0.7200,0.6900,0.8893,0.9122,0.8752,0.3640"
+}
