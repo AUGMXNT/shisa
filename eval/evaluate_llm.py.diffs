@@ -1,0 +1,38 @@
+diff --git a/scripts/evaluate_llm.py b/scripts/evaluate_llm.py
+index 11d7d76..3940e7a 100644
+--- a/scripts/evaluate_llm.py
++++ b/scripts/evaluate_llm.py
+@@ -83,7 +83,9 @@ def main(cfg: DictConfig):
+     log_dir.mkdir(exist_ok=True, parents=True)
+ 
+     tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(
+-        cfg.tokenizer.pretrained_model_name_or_path, use_fast=cfg.tokenizer.use_fast
++        cfg.tokenizer.pretrained_model_name_or_path,
++        use_fast=cfg.tokenizer.use_fast,
++        trust_remote_code = cfg.model.trust_remote_code if cfg.model.trust_remote_code is not None else False,
+     )
+ 
+     if cfg.torch_dtype == "bf16":
+@@ -102,7 +104,7 @@ def main(cfg: DictConfig):
+         model = hydra.utils.call(cfg.model, torch_dtype=torch_dtype, _recursive_=False)
+         model = PeftModel.from_pretrained(model, peft_dir)
+     else:
+-        model = hydra.utils.call(cfg.model, torch_dtype=torch_dtype, _recursive_=False)
++        model = hydra.utils.call(cfg.model, torch_dtype=torch_dtype, _recursive_=False, eos_token_id = tokenizer.eos_token_id, pad_token_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else tokenizer.eos_token_id)
+     model.eval()
+ 
+     if cfg.target_dataset == "all":
+@@ -142,8 +144,12 @@ def main(cfg: DictConfig):
+                 device_map="auto",
+                 **cfg.generator,
+             )
++            try:
++                bos_token = tokenizer.bos_token
++            except:
++                bos_token = '' 
+             prompt: BasePromptTemplate = get_evaluation_prompt(
+-                target_data["instruction"], target_data["few_shots"], cfg.num_few_shots
++                bos_token + target_data["instruction"], target_data["few_shots"], cfg.num_few_shots
+             )
+             llm_chain = LLMChain(
+                 llm=HuggingFacePipeline(pipeline=pipe),
