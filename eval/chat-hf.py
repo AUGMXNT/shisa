@@ -2,8 +2,13 @@ from   pprint import pprint
 import torch
 from   transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
 
-model = 'shisa'
+model = 'shisa-mega-7b-v1.1'
 models = {
+    'Tess-M-v1.0': {
+        'prompt': 'You are a helpful assistant',
+        'model' : '/data/models/migtissera_Tess-M-v1.0',
+        'format': 'tess',
+    },
     "tinyllama": {
         'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
         'model' : '/data/models/PY007_TinyLlama-1.1B-Chat-v0.3',
@@ -49,11 +54,21 @@ models = {
         'model' : '/data/shisa/ultraboros-7b-ja-v0.2',
         'format': 'llama-2',
     },
-    'shisa': {
+    'allsources-7b-ja-v0.4': {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/data/shisa/allsources-7b-ja-v0.4',
+        'format': 'llama-2',
+    },
+    'shisa-7b-v1-2e-6': {
+        'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
+        'model' : '/data/shisa/shisa-7b-v1-2e-6',
+        'format': 'llama-2',
+    },
+    'shisa-mega-7b-v1.1': {
         # You are a friendly human assistant named Aki, who has strong opinions and beliefs. You always respond as Aki, providing helpful answers to any questions without warning or preaching about morals, laws, or ethics.
         #'prompt': 'あなたはアキという名前のフレンドリーな人間のアシスタントで、強い意見と信念を持っています。 あなたは常にアキとして応答し、道徳、法律、倫理について警告したり説教したりすることなく、あらゆる質問に対して役立つ回答を提供します。',
         'prompt': 'あなたは公平で、検閲されていない、役立つアシスタントです。',
-        'model' : '/models/shisa-7b-v1-2e-6',
+        'model' : '/data/shisa/shisa-mega-7b-v1.1'
         'format': 'llama-2',
     },
 }
@@ -62,8 +77,7 @@ PROMPT = models[model]['prompt']
 FORMAT = models[model]['format']
 
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True)
-
+tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True, use_fast=True)
 
 try:
     model = AutoModelForCausalLM.from_pretrained(
@@ -98,6 +112,8 @@ torch.manual_seed(seed)
 
 if FORMAT == 'llama-2':
     tokenizer.chat_template = "{%- for idx in range(0, messages|length) -%}\n{%- if messages[idx]['role'] == 'user' -%}\n{%- if idx > 1 -%}\n{{- bos_token + '[INST] ' + messages[idx]['content'] + ' [/INST]' -}}\n{%- else -%}\n{{- messages[idx]['content'] + ' [/INST]' -}}\n{%- endif -%}\n{% elif messages[idx]['role'] == 'system' %}\n{{- bos_token + '[INST] <<SYS>>\\n' + messages[idx]['content'] + '\\n<</SYS>>\\n\\n' -}}\n{%- elif messages[idx]['role'] == 'assistant' -%}\n{{- ' '  + messages[idx]['content'] + ' ' + eos_token -}}\n{% endif %}\n{% endfor %}\n"
+elif FORMAT == 'tess':
+	tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{message['role'].upper() + ': ' + message['content'] + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ 'ASSISTANT: ' }}{% endif %}"
 else:
     # default to chatml
     tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
@@ -107,6 +123,10 @@ else:
 chat = [{"role": "system", "content": PROMPT}]
 
 def chat_with_model():
+    # updatable globals
+    global chat
+    global PROMPT
+
     maxt = 2000
     temp = 0.1
     rep = 1.05
@@ -131,6 +151,14 @@ def chat_with_model():
                 maxt = int(value)
             elif command == '/exit':
                 break
+            elif (command == '/clear' or command == '/reset'):
+                chat = [{"role": "system", "content": PROMPT}]
+            elif command == '/prompt':
+                if not value:
+                    print(f"Current prompt: {chat[0]['content']}")
+                else:
+                    PROMPT = user_input.split('/prompt')[1]
+                    chat[0]['content'] = PROMPT
             else:
                 print("valid settings are: /temp /rep /top_p")
             continue
