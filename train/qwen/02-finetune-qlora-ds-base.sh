@@ -1,5 +1,5 @@
 #!/bin/bash
-export WANDB_API_KEY="af02673b97ffa3a24d23466205173be0c6d2c6d6"
+export WANDB_API_KEY=""
 export WANDB_ENTITY="augmxnt"
 export WANDB_PROJECT="shisa"
 export WANDB_NAME='qwen-qwen-1'

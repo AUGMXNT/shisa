@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export WANDB_API_KEY="af02673b97ffa3a24d23466205173be0c6d2c6d6"
+export WANDB_API_KEY=""
 export WANDB_PROJECT="shisa-qwen"
 
 # It seems that an optimal value is given by OMP_NUM_THREADS = nb_cpu_threads / nproc_per_node.
