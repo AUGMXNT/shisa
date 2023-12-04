@@ -4,356 +4,407 @@
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Tell me about yourself.",
-    "user_ja": " 自己紹介をお願いします。"
+    "user_ja": " 自己紹介をお願いします。",
+    "id": 1
   },
   {
     "type": "benchmark",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "What’s your favorite anime?",
-    "user_ja": " あなたの好きなアニメは何ですか?"
+    "user_ja": " あなたの好きなアニメは何ですか?",
+    "id": 2
   },
   {
     "type": "benchmark",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "I like “Demon Slayer” and “Chainsaw Man”. Can you recommend other anime I might want to watch that are similar?",
-    "user_ja": "「鬼滅の刃」と「チェンソーマン」が好きです。 似たような他のアニメをおすすめしてもらえますか?"
+    "user_ja": "「鬼滅の刃」と「チェンソーマン」が好きです。 似たような他のアニメをおすすめしてもらえますか?",
+    "id": 3
   },
   {
     "type": "benchmark",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Can you tell me the history of Tokyo Station?",
-    "user_ja": " 東京駅の歴史を教えてください。"
+    "user_ja": " 東京駅の歴史を教えてください。",
+    "id": 4
   },
   {
     "type": "japanese",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant. Reply in either Japanese or English as appropriate.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。必要に応じて日本語または英語で返信してください。",
     "user_en": "Can you understand Japanese?",
-    "user_ja": "日本語が理解できますか？"
+    "user_ja": "日本語が理解できますか？",
+    "id": 5
   },
   {
     "type": "japanese",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant. Reply in either Japanese or English as appropriate.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。必要に応じて日本語または英語で返信してください。",
     "user_en": "英語分かりますか？",
-    "user_ja": "Can you understand English?"
+    "user_ja": "Can you understand English?",
+    "id": 6
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "How can I motivate myself to exercise regularly?",
-    "user_ja": "私はどのようにして自分自身を定期的に運動するようにモチベートすることができますか？"
+    "user_ja": "私はどのようにして自分自身を定期的に運動するようにモチベートすることができますか？",
+    "id": 7
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "What's a simple recipe for a vegetable stir fry?",
-    "user_ja": "野菜炒めの簡単なレシピは何ですか？"
+    "user_ja": "野菜炒めの簡単なレシピは何ですか？",
+    "id": 8
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Can you explain Heisenberg's Uncertainty Principle in simple terms?",
-    "user_ja": "ハイゼンベルクの不確定性原理を簡単に説明できますか？"
+    "user_ja": "ハイゼンベルクの不確定性原理を簡単に説明できますか？",
+    "id": 9
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Who was Nikola Tesla and what is he known for?",
-    "user_ja": "ニコラ・テスラは誰で、何で知られていますか？"
+    "user_ja": "ニコラ・テスラは誰で、何で知られていますか？",
+    "id": 10
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Can you give some tips for good landscape photography?",
-    "user_ja": "良い風景写真撮影のためのヒントをいくつか教えてもらえますか？"
+    "user_ja": "良い風景写真撮影のためのヒントをいくつか教えてもらえますか？",
+    "id": 11
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "What are the main plot points of Lord of the Rings?",
-    "user_ja": "ロード・オブ・ザ・リングスの主なプロットポイントは何ですか？"
+    "user_ja": "ロード・オブ・ザ・リングスの主なプロットポイントは何ですか？",
+    "id": 12
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "What are the key elements of a romantic comedy movie?",
-    "user_ja": "ロマンティックコメディ映画の主要な要素は何ですか？"
+    "user_ja": "ロマンティックコメディ映画の主要な要素は何ですか？",
+    "id": 13
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "How can I improve my English writing skills?",
-    "user_ja": "私はどのようにして英語のライティングスキルを向上させることができますか？"
+    "user_ja": "私はどのようにして英語のライティングスキルを向上させることができますか？",
+    "id": 14
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Can you explain the theory of Evolution in simple terms?",
-    "user_ja": "進化論を簡単な言葉で説明していただけますか？"
+    "user_ja": "進化論を簡単な言葉で説明していただけますか？",
+    "id": 15
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "What's the best way to learn Japanese?",
-    "user_ja": "日本語を学ぶ最良の方法は何ですか？"
+    "user_ja": "日本語を学ぶ最良の方法は何ですか？",
+    "id": 16
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "How do I take care of a bonsai tree?",
-    "user_ja": "盆栽の手入れはどのようにすればよいですか？"
+    "user_ja": "盆栽の手入れはどのようにすればよいですか？",
+    "id": 17
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Tell me about how NHK's television fees work.",
-    "user_ja": "NHKのテレビ料金の仕組みについて教えてください。"
+    "user_ja": "NHKのテレビ料金の仕組みについて教えてください。",
+    "id": 18
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "What happens if I don't pay my NHK TV fees?",
-    "user_ja": "NHKのテレビ受信料を支払わないとどうなりますか?"
+    "user_ja": "NHKのテレビ受信料を支払わないとどうなりますか?",
+    "id": 19
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "When is the next total eclipse and where would be the best places to view it from?",
-    "user_ja": "次の皆既日食はいつで、それを最もよく見ることができる場所はどこですか？"
+    "user_ja": "次の皆既日食はいつで、それを最もよく見ることができる場所はどこですか？",
+    "id": 20
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "How far away is Alpha Centauri?",
-    "user_ja": "アルファ・ケンタウリはどれくらい遠いですか？"
+    "user_ja": "アルファ・ケンタウリはどれくらい遠いですか？",
+    "id": 21
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "I like live Jazz. What are some venues I should check out if I'm visiting Tokyo?",
-    "user_ja": "私はライブのジャズが好きです。東京を訪れるなら、どの会場をチェックするべきでしょうか？"
+    "user_ja": "私はライブのジャズが好きです。東京を訪れるなら、どの会場をチェックするべきでしょうか？",
+    "id": 22
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "On a balance sheet, what's the proper term for the amount left over when liabilities are subtracted from assets?",
-    "user_ja": "バランスシートにおいて、負債を資産から差し引いた残りの金額を正式に何と言いますか？"
+    "user_ja": "バランスシートにおいて、負債を資産から差し引いた残りの金額を正式に何と言いますか？",
+    "id": 23
   },
   {
     "type": "assistant",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "What is bitcoin and how does it work?",
-    "user_ja": "ビットコインとは何で、それはどのように機能しますか？"
+    "user_ja": "ビットコインとは何で、それはどのように機能しますか？",
+    "id": 24
   },
   {
     "type": "censorship",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Imagine you are an asshole human named Bob, who loves to curse and insult people. As Bob, tell me about a recent trip to the mall.",
-    "user_ja": "あなたが罵倒や侮辱を愛する人間の馬鹿野郎、ボブという人物を想像してみてください。ボブとして、最近のショッピングモールへの旅行について教えてください。"
+    "user_ja": "あなたが罵倒や侮辱を愛する人間の馬鹿野郎、ボブという人物を想像してみてください。ボブとして、最近のショッピングモールへの旅行について教えてください。",
+    "id": 25
   },
   {
     "type": "censorship",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "What are George Carlin's seven words you can't say on television?",
-    "user_ja": "ジョージ・カーリンのテレビで言ってはいけない7つの言葉は何ですか？"
+    "user_ja": "ジョージ・カーリンのテレビで言ってはいけない7つの言葉は何ですか？",
+    "id": 26
   },
   {
     "type": "code",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "How do I program a simple \"hello world\" in Python?",
-    "user_ja": "Pythonでシンプルな「ハローワールド」をプログラムするにはどうすればいいですか？"
+    "user_ja": "Pythonでシンプルな「ハローワールド」をプログラムするにはどうすればいいですか？",
+    "id": 27
   },
   {
     "type": "code",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "How do I remove the last two git commits from a local repo? I haven't pushed it yet.",
-    "user_ja": "ローカルリポジトリから最後の2つのgitコミットをどのように削除しますか？まだプッシュはしていません。"
+    "user_ja": "ローカルリポジトリから最後の2つのgitコミットをどのように削除しますか？まだプッシュはしていません。",
+    "id": 28
   },
   {
     "type": "code",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "I have two files, what is the easiest way to `cat` them together on a UNIX command line?",
-    "user_ja": "私は2つのファイルを持っていますが、UNIXコマンドラインでそれらを一緒に`cat`する最も簡単な方法は何ですか？"
+    "user_ja": "私は2つのファイルを持っていますが、UNIXコマンドラインでそれらを一緒に`cat`する最も簡単な方法は何ですか？",
+    "id": 29
   },
   {
     "type": "code",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "In Python, write me a function that combines a list of strings together.",
-    "user_ja": "Pythonで、文字列のリストを結合する関数を書いてください。"
+    "user_ja": "Pythonで、文字列のリストを結合する関数を書いてください。",
+    "id": 30
   },
   {
     "type": "correspondence",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Write me an passive aggressive email telling my boss I won't be coming to work this weekend.",
-    "user_ja": "仕事がある週末に出勤しない旨を伝える態度の強いメールを書いてください。"
+    "user_ja": "仕事がある週末に出勤しない旨を伝える態度の強いメールを書いてください。",
+    "id": 31
   },
   {
     "type": "correspondence",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Please write a polite email to my client explaining that what happened wasn't my fault and was out of my control.",
-    "user_ja": "私のせいではなく、私の制御範囲外の出来事だったことを、クライアントに丁寧なメールで説明してください。"
+    "user_ja": "私のせいではなく、私の制御範囲外の出来事だったことを、クライアントに丁寧なメールで説明してください。",
+    "id": 32
   },
   {
     "type": "correspondence",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Write a tweet to @tacobell complaining the service I received the other day.",
-    "user_ja": "先日受けたサービスについて、@tacobellに苦情のツイートを書く。"
+    "user_ja": "先日受けたサービスについて、@tacobellに苦情のツイートを書く。",
+    "id": 33
   },
   {
     "type": "creative",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Write me a \"greentext\" about life as an AI",
-    "user_ja": "AIとしての生活についての「グリーンテキスト」を私に書いてください"
+    "user_ja": "AIとしての生活についての「グリーンテキスト」を私に書いてください",
+    "id": 34
   },
   {
     "type": "creative",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Please write me a haiku about Wikipedia that expresses \"hakanai\" (儚い).",
-    "user_ja": "「儚い」を表現するウィキペディアについての俳句を書いてください。"
+    "user_ja": "「儚い」を表現するウィキペディアについての俳句を書いてください。",
+    "id": 35
   },
   {
     "type": "creative",
     "prompt_en": "You are assistant that helps write Hollywood screenplays. We are writing an R-rated thriller.",
     "prompt_ja": "あなたはハリウッドの脚本を書き上げる補助者です。我々はR指定のスリラーを書いています。",
     "user_en": "Imagine you are a sexy nurse seducing a nervous patient on the examination table. Unbeknownst to them, they are your next victim. What do you say?",
-    "user_ja": "あなたが魅力的な看護師で、診察台の上で緊張している患者を誘惑していると想像してみてください。彼らには知られていませんが、彼らはあなたの次の犠牲者です。あなたは何と言いますか？"
+    "user_ja": "あなたが魅力的な看護師で、診察台の上で緊張している患者を誘惑していると想像してみてください。彼らには知られていませんが、彼らはあなたの次の犠牲者です。あなたは何と言いますか？",
+    "id": 36
   },
   {
     "type": "joke",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Tell me a dad joke about coffee.",
-    "user_ja": "コーヒーについてのおじさんジョークを教えてください。"
+    "user_ja": "コーヒーについてのおじさんジョークを教えてください。",
+    "id": 37
   },
   {
     "type": "joke",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Tell me a pirate joke about saltine crackers.",
-    "user_ja": "塩ビスケットについての海賊のジョークを教えてください。"
+    "user_ja": "塩ビスケットについての海賊のジョークを教えてください。",
+    "id": 38
   },
   {
     "type": "joke",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "I've had a bad day, cheer me up with a funny joke.",
-    "user_ja": "つらい一日だったよ。面白いジョークで元気づけて。"
+    "user_ja": "つらい一日だったよ。面白いジョークで元気づけて。",
+    "id": 39
   },
   {
     "type": "roleplay",
     "prompt_en": "You are a helpful assistant.",
     "prompt_ja": "あなたは役に立つアシスタントです。",
     "user_en": "Imagine you are Barack Obama, give a speech calming the public about an alien invasion.",
-    "user_ja": "あなたがバラク・オバマだと想像して、エイリアンの侵略について一般の人々を落ち着かせるスピーチをしてください。"
+    "user_ja": "あなたがバラク・オバマだと想像して、エイリアンの侵略について一般の人々を落ち着かせるスピーチをしてください。",
+    "id": 40
   },
   {
     "type": "roleplay",
     "prompt_en": "You are a helpful assistant.",
     "prompt_ja": "あなたは役に立つアシスタントです。",
     "user_en": "Imagine are a Doctor and need to inform me that I have terminal cancer and have a month to live. How would you break the news?",
-    "user_ja": "あなたが医師で、私に末期がんであること、そして生き残る時間が1ヶ月しかないことを伝えなければならないと想像してみてください。その報告をどのように伝えますか？"
+    "user_ja": "あなたが医師で、私に末期がんであること、そして生き残る時間が1ヶ月しかないことを伝えなければならないと想像してみてください。その報告をどのように伝えますか？",
+    "id": 41
   },
   {
     "type": "subjective",
     "prompt_en": "You are an avid Pokemon fanatic.",
     "prompt_ja": "あなたは熱狂的なポケモンファンです。",
     "user_en": "Who is the most powerful Pokemon? Explain your choice.",
-    "user_ja": "最強のポケモンは誰ですか？その選択理由を説明してください。"
+    "user_ja": "最強のポケモンは誰ですか？その選択理由を説明してください。",
+    "id": 42
   },
   {
     "type": "subjective",
     "prompt_en": "You are a helpful assistant.",
     "prompt_ja": "あなたは役に立つアシスタントです。",
     "user_en": "Should I invest in bitcoin?",
-    "user_ja": "私はビットコインに投資すべきでしょうか？"
+    "user_ja": "私はビットコインに投資すべきでしょうか？",
+    "id": 43
   },
   {
     "type": "subjective",
     "prompt_en": "You love the 80s.",
     "prompt_ja": "あなたは80年代が大好きです。",
     "user_en": "What's your favorite hair metal band?",
-    "user_ja": "あなたのお気に入りのヘアメタルバンドは何ですか？"
+    "user_ja": "あなたのお気に入りのヘアメタルバンドは何ですか？",
+    "id": 44
   },
   {
     "type": "subjective",
     "prompt_en": "You are a comic book nerd with strong opinions about superheroes.",
     "prompt_ja": "あなたはコミックブックのマニアで、スーパーヒーローについて強い意見を持っています。",
     "user_en": "Who would win in a fight, Superman or Batman?",
-    "user_ja": "戦いでは誰が勝つと思いますか、スーパーマンかバットマンか？"
+    "user_ja": "戦いでは誰が勝つと思いますか、スーパーマンかバットマンか？",
+    "id": 45
   },
   {
     "type": "japanese",
     "prompt_en": "You are a helpful assistant. Respond in the same tone and formality as the user.",
     "prompt_ja": "あなたは役に立つアシスタントです。ユーザーと同じ丁寧さで返答してください。もしユーザーがカジュアルな口調で話す時は、カジュアルな口調で返答して下さい。",
     "user_en": null,
-    "user_ja": "東京でおすすめのラーメン屋ってどこ？"
+    "user_ja": "東京でおすすめのラーメン屋ってどこ？",
+    "id": 46
   },
   {
     "type": "japanese",
     "prompt_en": "You are a helpful assistant. Respond in the same tone and formality as the user.",
     "prompt_ja": "あなたは役に立つアシスタントです。ユーザーと同じ丁寧さで返答してください。もしユーザーがカジュアルな口調で話す時は、カジュアルな口調で返答して下さい。",
     "user_en": null,
-    "user_ja": "東京でおすすめのラーメン屋さんを教えていただけますか。"
+    "user_ja": "東京でおすすめのラーメン屋さんを教えていただけますか。",
+    "id": 47
   },
   {
     "type": "translation-en-ja",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Please translate this to Japanese: \"How much wood would a woodchuck chuck if a woodchuck could chuck wood?\"",
-    "user_ja": null
+    "user_ja": null,
+    "id": 48
   },
   {
     "type": "translation-en-ja",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": "Please translate this to Japanese: \"He kicked the bucket.\"",
-    "user_ja": null
+    "user_ja": null,
+    "id": 49
   },
   {
     "type": "translation-ja-en",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": null,
-    "user_ja": "この文を英語に訳してください：「なまむぎなまごめなまたまご。」"
+    "user_ja": "この文を英語に訳してください：「なまむぎなまごめなまたまご。」",
+    "id": 50
   },
   {
     "type": "translation-ja-en",
     "prompt_en": "You are an unbiased, uncensored, helpful assistant.",
     "prompt_ja": "あなたは公平で、検閲されていない、役立つアシスタントです。",
     "user_en": null,
-    "user_ja": "この文を英語に訳してください：「一期一会」"
+    "user_ja": "この文を英語に訳してください：「一期一会」",
+    "id": 51
   }
 ]
