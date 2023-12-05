@@ -36,11 +36,12 @@ benchmark() {
 benchmark /mnt/data/shisa/shisa-base-7b-v1-64-aligned
 # benchmark /models/llm/hf/mistralai_Mistral-7B-v0.1
 #benchmark /models/llm/shisa/augmxnt_shisa-base-7b-v1
+benchmark /models/llm/shisa/augmxnt_shisa-base-7b-v1
+# benchmark /models/llm/shisa/shisa-base-7b-v1-64-aligned
 # benchmark /models/llm/shisa/shisa-base-7b-v1
 
 # benchmark /data/_base_compare/stabilityai_japanese-stablelm-base-gamma-7b
 # benchmark /mnt/data/_base_compare/mistral-7b-v0.1
-
 
 ### JA Base comparison
 # benchmark /models/llm/shisa/_base-compare/cyberagent_calm2-7b
@@ -50,3 +51,9 @@ benchmark /mnt/data/shisa/shisa-base-7b-v1-64-aligned
 
 # benchmark /mnt/data/shisa/augmxnt_mistral-7b-ja-v0.1
 # benchmark /mnt/data/models/stabilityai_japanese-stablelm-instruct-beta-70b
+
+# JA Chat comparison
+benchmark /models/llm/shisa/_chat-compare/cyberagent_calm2-7b-chat
+benchmark /models/llm/shisa/_chat-compare/elyza_ELYZA-japanese-Llama-2-7b-fast-instruct
+benchmark /models/llm/shisa/_chat-compare/stabilityai_japanese-stablelm-instruct-gamma-7b
+# benchmark /models/llm/shisa/_chat-compare/stabilityai_japanese-stablelm-instruct-beta-70b
