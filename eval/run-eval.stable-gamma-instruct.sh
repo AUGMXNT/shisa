@@ -1,5 +1,5 @@
-MODEL='/models/llm/hf/rinna_youri-7b-instruction'
-LOG='logs/youri-7b-instruction'
+MODEL='/data/models/stabilityai_japanese-stablelm-instruct-gamma-7b'
+LOG='logs/stabilityai_japanese-stablelm-instruct-gamma-7b.1'
 
 export CUDA_VISIBLE_DEVICES=0
 

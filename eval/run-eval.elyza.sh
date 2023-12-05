@@ -1,5 +1,5 @@
-MODEL='/models/llm/hf/rinna_youri-7b-instruction'
-LOG='logs/youri-7b-instruction'
+MODEL='/mnt/data/models/elyza_ELYZA-japanese-Llama-2-7b-fast-instruct'
+LOG='logs/elyza_ELYZA-japanese-Llama-2-7b-fast-instruct'
 
 export CUDA_VISIBLE_DEVICES=0
 

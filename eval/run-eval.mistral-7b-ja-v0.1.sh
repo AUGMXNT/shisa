@@ -1,5 +1,5 @@
-MODEL='/models/llm/hf/rinna_youri-7b-instruction'
-LOG='logs/youri-7b-instruction'
+MODEL='/models/augmxnt_mistral-7b-ja-v0.1'
+LOG='logs/augmxnt_mistral-7b-ja-v0.1'
 
 export CUDA_VISIBLE_DEVICES=0
 
