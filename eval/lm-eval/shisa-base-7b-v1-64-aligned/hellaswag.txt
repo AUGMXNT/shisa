@@ -1,0 +1,6 @@
+hf (pretrained=/mnt/data/shisa/shisa-base-7b-v1-64-aligned,dtype=float16,load_in_8bit=True), gen_kwargs: (), limit: None, num_fewshot: 10, batch_size: 2
+|  Tasks  |Version|Filter|n-shot| Metric |Value |   |Stderr|
+|---------|-------|------|-----:|--------|-----:|---|-----:|
+|hellaswag|Yaml   |none  |    10|acc     |0.2796|±  |0.0045|
+|         |       |none  |    10|acc_norm|0.2979|±  |0.0046|
+

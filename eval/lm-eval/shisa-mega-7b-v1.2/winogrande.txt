@@ -1,0 +1,47 @@
+Selected Tasks: ['winogrande']
+Task: winogrande; number of docs: 1267
+Task: winogrande; document 0; context prompt (starting on next line):
+Natalie took basic French lessons from Betty after school because Betty is strong at that language.
+
+My friends tried to drive the car through the alleyway but the car was too wide.
+
+Sarah didn't practice ballet much but Mary practiced all the time. Sarah wasn't chosen to be a lead dancer.
+
+The trainer tried to put the exercise equipment in the van but it wouldn't fit; the van was too small.
+
+Natalie never checks the air in the tires while Tanya does and you just knew Natalie would have flat tires.
+
+People think Rebecca
+(end of prompt on previous line)
+Requests: [Req_loglikelihood("Natalie took basic French lessons from Betty after school because Betty is strong at that language.\n\nMy friends tried to drive the car through the alleyway but the car was too wide.\n\nSarah didn't practice ballet much but Mary practiced all the time. Sarah wasn't chosen to be a lead dancer.\n\nThe trainer tried to put the exercise equipment in the van but it wouldn't fit; the van was too small.\n\nNatalie never checks the air in the tires while Tanya does and you just knew Natalie would have flat tires.\n\nPeople think Samantha", ' is embarassed, because Samantha made snide comments about the shirt Rebecca was wearing.')[0]
+, Req_loglikelihood("Natalie took basic French lessons from Betty after school because Betty is strong at that language.\n\nMy friends tried to drive the car through the alleyway but the car was too wide.\n\nSarah didn't practice ballet much but Mary practiced all the time. Sarah wasn't chosen to be a lead dancer.\n\nThe trainer tried to put the exercise equipment in the van but it wouldn't fit; the van was too small.\n\nNatalie never checks the air in the tires while Tanya does and you just knew Natalie would have flat tires.\n\nPeople think Rebecca", ' is embarassed, because Samantha made snide comments about the shirt Rebecca was wearing.')[0]
+]
+Running loglikelihood requests
+{
+  "results": {
+    "winogrande": {
+      "acc": 0.7182320441988951,
+      "acc_stderr": 0.012643326011852942
+    }
+  },
+  "versions": {
+    "winogrande": 0
+  },
+  "config": {
+    "model": "hf-causal-experimental",
+    "model_args": "pretrained=/mnt/data/shisa/zero-extra/shisa-mega-7b-v1.2,use_flash_attention_2=False,dtype=float16,load_in_8bit=True",
+    "num_fewshot": 5,
+    "batch_size": "2",
+    "batch_sizes": [],
+    "device": null,
+    "no_cache": false,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}
+hf-causal-experimental (pretrained=/mnt/data/shisa/zero-extra/shisa-mega-7b-v1.2,use_flash_attention_2=False,dtype=float16,load_in_8bit=True), limit: None, provide_description: False, num_fewshot: 5, batch_size: 2
+|   Task   |Version|Metric|Value |   |Stderr|
+|----------|------:|------|-----:|---|-----:|
+|winogrande|      0|acc   |0.7182|±  |0.0126|
+
