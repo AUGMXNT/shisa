@@ -1,13 +1,25 @@
 from   pprint import pprint
 from   prompt_toolkit import prompt
+from   prompt_toolkit.filters import Condition
 from   prompt_toolkit.input.defaults import create_input
 from   prompt_toolkit.key_binding import KeyBindings
 from   prompt_toolkit.keys import Keys
+
 import torch
 from   transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
 
-model = 'shisa-12b-v1'
+model = 'jamba'
 models = {
+    'jamba': {
+        'prompt': 'You are a helpful assistant',
+        'model' : 'ai21labs/Jamba-v0.1',
+        'format': 'chatml',
+    },
+    'dbrx-instruct': {
+        'prompt': 'You are a helpful assistant',
+        'model' : 'databricks/dbrx-instruct',
+        'format': 'chatml',
+    },
     'Capybara-34B': {
         'prompt': 'You are a helpful assistant',
         'model' : '/models/llm/hf/NousResearch_Nous-Capybara-34B',
@@ -107,7 +119,7 @@ try:
     model = AutoModelForCausalLM.from_pretrained(
         MODEL,
         torch_dtype=torch.bfloat16,
-        use_flash_attention_2=True,
+        attn_implemenation="flash_attention_2",
         device_map="auto",
         trust_remote_code=True,
         low_cpu_mem_usage=True
@@ -153,17 +165,17 @@ chat = [{"role": "system", "content": PROMPT}]
 
 
 # Key bindings for toggling between single-line and multiline input modes
+kb = KeyBindings()
+
+@kb.add('escape', 'enter')
+def _(event):
+    event.current_buffer.insert_text('\n')
+
+@kb.add('enter')
+def _(event):
+    event.current_buffer.validate_and_handle()
 key_bindings = KeyBindings()
 
-@key_bindings.add('c-j')
-def _(event):
-    event.app.current_buffer.multiline = not event.app.current_buffer.multiline()
-
-'''
-@key_bindings.add(Keys.ControlEnter)
-def _(event):
-    event.app.current_buffer.validate_and_handle()
-'''
 
 def chat_with_model():
     # updatable globals
@@ -179,7 +191,7 @@ def chat_with_model():
 
     while True:
         # Get input from the user
-        user_input = prompt("User: ", multiline=True, key_bindings=key_bindings)
+        user_input = prompt("User: ", multiline=True, key_bindings=kb)
         if user_input.lower() == 'exit':
             break
         elif user_input[0] == '/':
