@@ -19,7 +19,7 @@ stabilityai/japanese-stablelm-instruct-gamma-7b	0.5227	0.3900	0.5300	0.8200	0.46
 df = pd.read_csv(StringIO(data), sep='\t')
 
 # Creating offset DataFrame for shisa models
-shisa_models = df[df['Model'].isin(['augmxnt/shisa-base-7b-v1', 'shisa-base-7b.ultra-v0.4', 'shisa-base-7b.jpslm-instruct-gamma'])].reset_index(drop=True)
+shisa_models = df[df['Model'].isin(['augmxnt/shisa-base-7b-v1', 'shisa-base-7b.mega-v1.2', 'shisa-base-7b.jpslm-instruct-gamma'])].reset_index(drop=True)
 shisa_offset_df = shisa_models.drop(columns=['Model', 'JP AVG']).subtract(shisa_models.iloc[0, 2:])
 shisa_offset_df['Model'] = shisa_models['Model']
 shisa_offset_df = shisa_offset_df.drop(0).reset_index(drop=True)
@@ -34,7 +34,7 @@ jpslm_offset_df = jpslm_offset_df.drop(0).reset_index(drop=True)
 n_groups = len(shisa_offset_df.columns) - 1
 bar_width = 0.35
 index = np.arange(n_groups)
-colors = {'shisa-base-7b.ultra-v0.4': 'red', 'shisa-base-7b.jpslm-instruct-gamma': 'purple', 'jpslm-gamma-7b.ultra-v0.4': 'red', 'stabilityai/japanese-stablelm-instruct-gamma-7b': 'purple'}
+colors = {'shisa-base-7b.mega-v1.2': 'red', 'shisa-base-7b.jpslm-instruct-gamma': 'purple', 'jpslm-gamma-7b.ultra-v0.4': 'red', 'stabilityai/japanese-stablelm-instruct-gamma-7b': 'purple'}
 
 # Creating the first bar plot (shisa models)
 fig, ax = plt.subplots(figsize=(12, 6))
